@@ -7,10 +7,12 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@types/d3": "^7.0.0",
     "@types/jest": "^26.0.24",
     "@types/node": "^12.20.23",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
+    "d3": "^7.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
@@ -23,7 +25,10 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "./node_modules/.bin/gh-pages -d build"
+    "deploy": "./node_modules/.bin/gh-pages -d build",
+    "clean": "./node_modules/.bin/rimraf -rf ./build",
+    "format": "./node_modules/.bin/prettier --write src/**/*.{ts,tsx}",
+    "lint": "./node_modules/.bin/eslint --fix src/**/*.{ts,tsx}"
   },
   "eslintConfig": {
     "extends": [
@@ -44,6 +49,14 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^3.2.3"
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-typescript-prettier": "^4.2.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "gh-pages": "^3.2.3",
+    "prettier": "^2.3.2",
+    "rimraf": "^3.0.2"
   }
 }
