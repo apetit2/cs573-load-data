@@ -1,6 +1,9 @@
 language: node_js
 node_js:
   - '14'
+cache:
+  directories:
+    - node_modules
 dist: trusty
 sudo: required
 install:
@@ -10,5 +13,11 @@ branches:
     - main
 before_script:
 script:
-  - npm run deploy
-  
+  - npm run build
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $github_token
+  local_dir: build
+  on:
+    branch: gh_pages
