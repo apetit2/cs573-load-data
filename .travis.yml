@@ -20,4 +20,4 @@ deploy:
   github_token: $github_token
   local_dir: build
   on:
-    branch: gh_pages
+    branch: main
