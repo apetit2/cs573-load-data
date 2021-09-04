@@ -1,4 +1,4 @@
-import { Space, Typography } from 'antd';
+import { Space, Spin, Typography } from 'antd';
 
 import { csvFormat } from 'd3-dsv';
 import { useAvocadoQuery } from '../../services/hooks/useQuery';
@@ -8,14 +8,35 @@ const { Text } = Typography;
 export interface AvocadoProps {}
 
 export const Avocado: React.FC<AvocadoProps> = () => {
-  const { data } = useAvocadoQuery();
+  const { data, isError, isLoading } = useAvocadoQuery();
 
-  if (!data) {
+  if (isError) {
     return (
       <Text strong style={{ color: 'red' }}>
         Failed To Load Avocado Data
       </Text>
     );
+  }
+
+  if (isLoading) {
+    return (
+      <Space
+        align="center"
+        direction="horizontal"
+        style={{
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          paddingTop: 100,
+        }}
+      >
+        <Spin tip="Loading..." />
+      </Space>
+    );
+  }
+
+  if (!data) {
+    return <Text strong>No Data Found.</Text>;
   }
 
   return (

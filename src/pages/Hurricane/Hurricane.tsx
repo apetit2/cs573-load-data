@@ -1,4 +1,4 @@
-import { Space, Typography } from 'antd';
+import { Space, Spin, Typography } from 'antd';
 
 import { csvFormat } from 'd3-dsv';
 import { useHurricaneQuery } from '../../services/hooks/useQuery';
@@ -8,14 +8,35 @@ const { Text } = Typography;
 export interface HurricaneProps {}
 
 export const Hurricane: React.FC<HurricaneProps> = () => {
-  const { data } = useHurricaneQuery();
+  const { data, isError, isLoading } = useHurricaneQuery();
 
-  if (!data) {
+  if (isError) {
     return (
       <Text strong style={{ color: 'red' }}>
         Failed To Load Hurricane Data
       </Text>
     );
+  }
+
+  if (isLoading) {
+    return (
+      <Space
+        align="center"
+        direction="horizontal"
+        style={{
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          paddingTop: 100,
+        }}
+      >
+        <Spin tip="Loading..." />
+      </Space>
+    );
+  }
+
+  if (!data) {
+    return <Text strong>No Data Found.</Text>;
   }
 
   return (

@@ -2,33 +2,21 @@ import './index.css';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { Avocado } from './pages/Avocado';
-import { Hurricane } from './pages/Hurricane';
-import { MinimumWage } from './pages/MinimumWage';
+import { DataTabs } from './DataTabs';
+import { HelmetProvider } from 'react-helmet-async';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Tabs } from 'antd';
 import reportWebVitals from './reportWebVitals';
-
-const { TabPane } = Tabs;
 
 const queryClient = new QueryClient();
 
 ReactDOM.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <Tabs defaultActiveKey="1" className="data-tabs">
-        <TabPane tab="Minimum Wage Data" key="1">
-          <MinimumWage />
-        </TabPane>
-        <TabPane tab="Avocado Data" key="2">
-          <Avocado />
-        </TabPane>
-        <TabPane tab="Hurricane Data" key="3">
-          <Hurricane />
-        </TabPane>
-      </Tabs>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <DataTabs />
+      </QueryClientProvider>
+    </HelmetProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
