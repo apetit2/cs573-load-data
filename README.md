@@ -13,5 +13,6 @@ This project was bootstrapped with CRA (create react tool), and so all applicabl
 - You need to run the start script - `npm start`
 - And that's it!
 
-# About Each Of The Graphs
-### Minimum Wage
+# About Each Of The Dataset Graphs
+For each of the datasets, I attempted to make them as interactable as possible. I allow users to choose which columns get plotted on the x/y axes, for easy comparison of data. This was done primarily so that it's easy to see which column comparisons provide interesting patterns. Obviously, some comparisons are more meaningful than others, but it was interesting to see how things would compare. In addition, I created an ordinal scale around color for each of the graphs. This is again customizable.
+
