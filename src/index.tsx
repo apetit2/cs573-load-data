@@ -15,7 +15,7 @@ ReactDOM.render(
   <React.StrictMode>
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <Router basename={process.env.PUBLIC_URL}>
+        <Router>
           <HomeLayout />
         </Router>
       </QueryClientProvider>

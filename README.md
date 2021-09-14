@@ -12,3 +12,6 @@ This project was bootstrapped with CRA (create react tool), and so all applicabl
 - You need to install all npm dependencies - `npm install`
 - You need to run the start script - `npm start`
 - And that's it!
+
+# About Each Of The Graphs
+### Minimum Wage
