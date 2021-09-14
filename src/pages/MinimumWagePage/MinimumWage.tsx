@@ -1,37 +1,39 @@
 import {
-  HurricaneCol,
-  HurricaneCols,
-  Hurricane as HurricaneModel,
-} from '../../services/models/hurricane';
+  MinimumWageCol,
+  MinimumWageCols,
+  MinimumWage as MinimumWageModel,
+} from '../../services/models/minimumWage';
 import { Space, Typography } from 'antd';
 
 import { ScatterPlot } from '../../components/ScatterPlot';
 import { SelectAxes } from './components/SelectAxes';
 import { csvFormat } from 'd3-dsv';
 import { useFallback } from '../../hooks/useFallback';
-import { useHurricaneQuery } from '../../services/hooks/useQuery';
 import { useInitializeChart } from '../../hooks/useInitializeChart';
+import { useMinimumWageQuery } from '../../services/hooks/useQuery';
 import { useResizeChart } from '../../hooks/useResizeChart';
 import { useState } from 'react';
 
 const { Text } = Typography;
 
-export interface HurricaneProps {}
+export interface MinimumWageProps {}
 
-export const Hurricane: React.FC<HurricaneProps> = () => {
-  const { data, isError, isLoading } = useHurricaneQuery();
-  const [selectedColor, setSelectedColor] = useState<HurricaneCol>('status');
-  const [xAxis, setXAxis] = useState<HurricaneCol>('year');
-  const [yAxis, setYAxis] = useState<HurricaneCol>('maxWind');
+export const MinimumWage: React.FC<MinimumWageProps> = () => {
+  const { data, isError, isLoading } = useMinimumWageQuery();
+  const [selectedColor, setSelectedColor] = useState<MinimumWageCol>('state');
+  const [xAxis, setXAxis] = useState<MinimumWageCol>('year');
+  const [yAxis, setYAxis] = useState<MinimumWageCol>(
+    'effectiveMinWageTodayDollars'
+  );
 
-  // hurricane specific
-  const xValue = (row: HurricaneModel) => row[xAxis] as number;
-  const xAxisLabel = HurricaneCols[xAxis].title;
-  const yValue = (row: HurricaneModel) => row[yAxis] as number;
-  const yAxisLabel = HurricaneCols[yAxis].title;
-  const colorValue = (row: HurricaneModel) => row[selectedColor] as string;
+  // minimum wage specific
+  const xValue = (row: MinimumWageModel) => row[xAxis] as number;
+  const xAxisLabel = MinimumWageCols[xAxis].title;
+  const yValue = (row: MinimumWageModel) => row[yAxis] as number;
+  const yAxisLabel = MinimumWageCols[yAxis].title;
+  const colorValue = (row: MinimumWageModel) => row.state as string;
 
-  const { fallback } = useFallback(isLoading, isError, 'Hurricane');
+  const { fallback } = useFallback(isLoading, isError, 'Minimum Wage');
 
   const { dimensions, setContainerDiv } = useResizeChart();
   const {
@@ -66,7 +68,7 @@ export const Hurricane: React.FC<HurricaneProps> = () => {
           style={{ justifyContent: 'space-between', width: '100%' }}
         >
           <Space direction="vertical" size="middle">
-            <Text strong>Hurricane Data Info</Text>
+            <Text strong>Minimum Wage Data Info</Text>
             <Text>Number of Rows: {data.length}</Text>
             <Text>Number of Columns: {Object.keys(data[0]).length}</Text>
             <Text>Size: {Math.round(csvFormat(data).length / 1024)} kb</Text>

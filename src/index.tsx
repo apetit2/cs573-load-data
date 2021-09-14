@@ -2,10 +2,11 @@ import './index.css';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { DataTabs } from './DataTabs';
 import { HelmetProvider } from 'react-helmet-async';
+import { HomeLayout } from './HomeLayout';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 
 const queryClient = new QueryClient();
@@ -14,7 +15,9 @@ ReactDOM.render(
   <React.StrictMode>
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <DataTabs />
+        <Router basename={process.env.PUBLIC_URL}>
+          <HomeLayout />
+        </Router>
       </QueryClientProvider>
     </HelmetProvider>
   </React.StrictMode>,

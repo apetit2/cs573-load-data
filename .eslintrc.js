@@ -11,5 +11,6 @@ module.exports = {
       'react/react-in-jsx-scope': 0,
       'import/order': 0,
       '@typescript-eslint/no-empty-interface': 0,
+      '@typescript-eslint/no-non-null-assertion': 0,
     },
   };

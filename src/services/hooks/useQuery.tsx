@@ -1,16 +1,19 @@
-import { DSVRowArray } from 'd3-dsv';
+import { Avocado } from '../models/avocado';
+import { DSVParsedArray } from 'd3-dsv';
+import { Hurricane } from '../models/hurricane';
+import { MinimumWage } from '../models/minimumWage';
 import { fetchAvocadoCSV } from '../lib/avocado';
 import { fetchHurricaneCSV } from '../lib/hurricane';
 import { fetchMinimumWageCSV } from '../lib/minimumWage';
 import { useQuery } from 'react-query';
 
 const useMinimumWageQuery = () =>
-  useQuery<DSVRowArray<string>, Error>('minWage', fetchMinimumWageCSV);
+  useQuery<DSVParsedArray<MinimumWage>, Error>('minWage', fetchMinimumWageCSV);
 
 const useAvocadoQuery = () =>
-  useQuery<DSVRowArray<string>, Error>('avocado', fetchAvocadoCSV);
+  useQuery<DSVParsedArray<Avocado>, Error>('avocado', fetchAvocadoCSV);
 
 const useHurricaneQuery = () =>
-  useQuery<DSVRowArray<string>, Error>('hurricane', fetchHurricaneCSV);
+  useQuery<DSVParsedArray<Hurricane>, Error>('hurricane', fetchHurricaneCSV);
 
 export { useAvocadoQuery, useHurricaneQuery, useMinimumWageQuery };

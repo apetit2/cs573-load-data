@@ -1,1 +1,1 @@
-export * from './Avocado';
+export { Avocado as default } from './Avocado';
