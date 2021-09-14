@@ -6,7 +6,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { HomeLayout } from './HomeLayout';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 
 const queryClient = new QueryClient();
