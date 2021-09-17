@@ -3,7 +3,7 @@ import './index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { HelmetProvider } from 'react-helmet-async';
-import { HomeLayout } from './HomeLayout';
+import { HomeLayout } from './layout/HomeLayout';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router } from 'react-router-dom';

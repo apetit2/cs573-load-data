@@ -1,18 +1,21 @@
+import './HomeLayout.css';
+
 import {
   AppleOutlined,
   DollarCircleOutlined,
   FireOutlined,
+  MenuOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
+import { Button, Drawer, Layout, Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import React, { useState } from 'react';
 
-import { AppRouter } from './AppRouter';
-import { AppRoutes } from './appRoutes';
+import { AppRouter } from '../AppRouter';
+import { AppRoutes } from '../appRoutes';
 import { Helmet } from 'react-helmet-async';
-import { Loading } from './components/Loading/Loading';
+import { Loading } from '../components/Loading/Loading';
 
-const { Sider, Content } = Layout;
+const { Content, Header } = Layout;
 
 const MIN_WAGE_TITLE = 'Minimum Wage Data';
 const AVOCADO_TITLE = 'Avocado Data';
@@ -44,7 +47,17 @@ export const HomeLayout: React.FC<HomeLayoutProps> = () => {
         <meta name="description" content={title} />
       </Helmet>
       <Layout style={{ minHeight: '100vh' }}>
-        <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
+        <Drawer
+          bodyStyle={{ backgroundColor: '#001628' }}
+          headerStyle={{
+            border: 'none',
+          }}
+          title="Pages"
+          width={250}
+          placement="left"
+          visible={collapsed}
+          onClose={() => setCollapsed(false)}
+        >
           <Menu theme="dark" selectedKeys={[selectedTab]}>
             <Menu.Item key="1" icon={<DollarCircleOutlined />}>
               <Link to={AppRoutes.MinimumWage}>{MIN_WAGE_TITLE}</Link>
@@ -56,8 +69,13 @@ export const HomeLayout: React.FC<HomeLayoutProps> = () => {
               <Link to={AppRoutes.Hurricane}>{HURRICANE_TITLE}</Link>
             </Menu.Item>
           </Menu>
-        </Sider>
+        </Drawer>
         <Layout>
+          <Header>
+            <Button type="primary" onClick={() => setCollapsed(!collapsed)}>
+              <MenuOutlined />
+            </Button>
+          </Header>
           <React.Suspense fallback={<Loading />}>
             <Content style={{ margin: '16px 16px' }}>
               <AppRouter />
