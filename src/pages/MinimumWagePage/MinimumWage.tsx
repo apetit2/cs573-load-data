@@ -1,12 +1,12 @@
+import { Col, Row, Select, Space, Typography } from 'antd';
 import {
   MinimumWageCol,
   MinimumWageCols,
   MinimumWage as MinimumWageModel,
 } from '../../services/models/minimumWage';
-import { Space, Typography } from 'antd';
 
 import { ScatterPlot } from '../../components/ScatterPlot';
-import { SelectAxes } from './components/SelectAxes';
+import { SelectAxes } from '../../components/SelectAxes';
 import { csvFormat } from 'd3-dsv';
 import { useFallback } from '../../hooks/useFallback';
 import { useInitializeChart } from '../../hooks/useInitializeChart';
@@ -15,6 +15,7 @@ import { useResizeChart } from '../../hooks/useResizeChart';
 import { useState } from 'react';
 
 const { Text } = Typography;
+const { Option } = Select;
 
 export interface MinimumWageProps {}
 
@@ -32,6 +33,42 @@ export const MinimumWage: React.FC<MinimumWageProps> = () => {
   const yValue = (row: MinimumWageModel) => row[yAxis] as number;
   const yAxisLabel = MinimumWageCols[yAxis].title;
   const colorValue = (row: MinimumWageModel) => row.state as string;
+
+  const xOptions = (Object.keys(MinimumWageCols) as MinimumWageCol[]).map(
+    (key) => (
+      <Option
+        value={key}
+        key={key}
+        disabled={MinimumWageCols[key].type !== 'number'}
+      >
+        {MinimumWageCols[key].title}
+      </Option>
+    )
+  );
+
+  const yOptions = (Object.keys(MinimumWageCols) as MinimumWageCol[]).map(
+    (key) => (
+      <Option
+        value={key}
+        key={key}
+        disabled={MinimumWageCols[key].type !== 'number'}
+      >
+        {MinimumWageCols[key].title}
+      </Option>
+    )
+  );
+
+  const colorOptions = (Object.keys(MinimumWageCols) as MinimumWageCol[]).map(
+    (key) => (
+      <Option
+        value={key}
+        key={key}
+        disabled={MinimumWageCols[key].type !== 'string'}
+      >
+        {MinimumWageCols[key].title}
+      </Option>
+    )
+  );
 
   const { fallback } = useFallback(isLoading, isError, 'Minimum Wage');
 
@@ -63,25 +100,30 @@ export const MinimumWage: React.FC<MinimumWageProps> = () => {
   return (
     <div style={{ width: '100%' }} ref={(el) => setContainerDiv(el)}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Space
-          direction="horizontal"
-          style={{ justifyContent: 'space-between', width: '100%' }}
-        >
-          <Space direction="vertical" size="middle">
-            <Text strong>Minimum Wage Data Info</Text>
-            <Text>Number of Rows: {data.length}</Text>
-            <Text>Number of Columns: {Object.keys(data[0]).length}</Text>
-            <Text>Size: {Math.round(csvFormat(data).length / 1024)} kb</Text>
-          </Space>
-          <SelectAxes
-            selectedX={xAxis}
-            selectedY={yAxis}
-            selectedColor={selectedColor}
-            onSelectX={setXAxis}
-            onSelectY={setYAxis}
-            onSelectColor={setSelectedColor}
-          />
-        </Space>
+        <Row style={{ width: '100%' }} justify="space-between" gutter={[0, 24]}>
+          <Col sm={20} md={8} lg={5}>
+            <Space direction="vertical" size="middle">
+              <Text strong>Minimum Wage Data Info</Text>
+              <Text>Number of Rows: {data.length}</Text>
+              <Text>Number of Columns: {Object.keys(data[0]).length}</Text>
+              <Text>Size: {Math.round(csvFormat(data).length / 1024)} kb</Text>
+            </Space>
+          </Col>
+          <Col sm={20} md={12} lg={15}>
+            <SelectAxes
+              id="minimum-wage"
+              selectedX={xAxis}
+              selectedY={yAxis}
+              selectedColor={selectedColor}
+              onSelectX={setXAxis as (xAxis: string) => void}
+              onSelectY={setYAxis as (yAxis: string) => void}
+              onSelectColor={setSelectedColor as (color: string) => void}
+              xOptions={xOptions}
+              yOptions={yOptions}
+              colorOptions={colorOptions}
+            />
+          </Col>
+        </Row>
         <ScatterPlot
           width={width}
           height={height}

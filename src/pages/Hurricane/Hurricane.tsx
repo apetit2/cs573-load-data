@@ -1,12 +1,12 @@
+import { Col, Row, Select, Space, Typography } from 'antd';
 import {
   HurricaneCol,
   HurricaneCols,
   Hurricane as HurricaneModel,
 } from '../../services/models/hurricane';
-import { Space, Typography } from 'antd';
 
 import { ScatterPlot } from '../../components/ScatterPlot';
-import { SelectAxes } from './components/SelectAxes';
+import { SelectAxes } from '../../components/SelectAxes';
 import { csvFormat } from 'd3-dsv';
 import { useFallback } from '../../hooks/useFallback';
 import { useHurricaneQuery } from '../../services/hooks/useQuery';
@@ -15,6 +15,7 @@ import { useResizeChart } from '../../hooks/useResizeChart';
 import { useState } from 'react';
 
 const { Text } = Typography;
+const { Option } = Select;
 
 export interface HurricaneProps {}
 
@@ -30,6 +31,38 @@ export const Hurricane: React.FC<HurricaneProps> = () => {
   const yValue = (row: HurricaneModel) => row[yAxis] as number;
   const yAxisLabel = HurricaneCols[yAxis].title;
   const colorValue = (row: HurricaneModel) => row[selectedColor] as string;
+
+  const xOptions = (Object.keys(HurricaneCols) as HurricaneCol[]).map((key) => (
+    <Option
+      value={key}
+      key={key}
+      disabled={HurricaneCols[key].type !== 'number'}
+    >
+      {HurricaneCols[key].title}
+    </Option>
+  ));
+
+  const yOptions = (Object.keys(HurricaneCols) as HurricaneCol[]).map((key) => (
+    <Option
+      value={key}
+      key={key}
+      disabled={HurricaneCols[key].type !== 'number'}
+    >
+      {HurricaneCols[key].title}
+    </Option>
+  ));
+
+  const colorOptions = (Object.keys(HurricaneCols) as HurricaneCol[]).map(
+    (key) => (
+      <Option
+        value={key}
+        key={key}
+        disabled={HurricaneCols[key].type !== 'string'}
+      >
+        {HurricaneCols[key].title}
+      </Option>
+    )
+  );
 
   const { fallback } = useFallback(isLoading, isError, 'Hurricane');
 
@@ -61,25 +94,30 @@ export const Hurricane: React.FC<HurricaneProps> = () => {
   return (
     <div style={{ width: '100%' }} ref={(el) => setContainerDiv(el)}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Space
-          direction="horizontal"
-          style={{ justifyContent: 'space-between', width: '100%' }}
-        >
-          <Space direction="vertical" size="middle">
-            <Text strong>Hurricane Data Info</Text>
-            <Text>Number of Rows: {data.length}</Text>
-            <Text>Number of Columns: {Object.keys(data[0]).length}</Text>
-            <Text>Size: {Math.round(csvFormat(data).length / 1024)} kb</Text>
-          </Space>
-          <SelectAxes
-            selectedX={xAxis}
-            selectedY={yAxis}
-            selectedColor={selectedColor}
-            onSelectX={setXAxis}
-            onSelectY={setYAxis}
-            onSelectColor={setSelectedColor}
-          />
-        </Space>
+        <Row style={{ width: '100%' }} justify="space-between" gutter={[0, 24]}>
+          <Col sm={20} md={8} lg={5}>
+            <Space direction="vertical" size="middle">
+              <Text strong>Hurricane Data Info</Text>
+              <Text>Number of Rows: {data.length}</Text>
+              <Text>Number of Columns: {Object.keys(data[0]).length}</Text>
+              <Text>Size: {Math.round(csvFormat(data).length / 1024)} kb</Text>
+            </Space>
+          </Col>
+          <Col sm={20} md={12} lg={15}>
+            <SelectAxes
+              id="hurricane"
+              selectedX={xAxis}
+              selectedY={yAxis}
+              selectedColor={selectedColor}
+              onSelectX={setXAxis as (xAxis: string) => void}
+              onSelectY={setYAxis as (yAxis: string) => void}
+              onSelectColor={setSelectedColor as (color: string) => void}
+              xOptions={xOptions}
+              yOptions={yOptions}
+              colorOptions={colorOptions}
+            />
+          </Col>
+        </Row>
         <ScatterPlot
           width={width}
           height={height}
