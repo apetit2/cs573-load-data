@@ -60,16 +60,32 @@ export const HomeLayout: React.FC<HomeLayoutProps> = () => {
           onClose={() => setCollapsed(false)}
         >
           <Menu theme="dark" selectedKeys={[selectedTab]} mode="inline">
-            <Menu.Item key="1" icon={<DollarCircleOutlined />}>
-              <Link
-                to={`${AppRoutes.MinimumWage.replace(
-                  ':plotType',
-                  'scatter-plot'
-                )}`}
-              >
-                {MIN_WAGE_TITLE}
-              </Link>
-            </Menu.Item>
+            <SubMenu
+              key="1"
+              icon={<DollarCircleOutlined />}
+              title={MIN_WAGE_TITLE}
+            >
+              <Menu.Item key="1.1">
+                <Link
+                  to={`${AppRoutes.MinimumWage.replace(
+                    ':plotType',
+                    'scatter-plot'
+                  )}`}
+                >
+                  Scatter Plot
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="1.2">
+                <Link
+                  to={`${AppRoutes.MinimumWage.replace(
+                    ':plotType',
+                    'topography'
+                  )}`}
+                >
+                  Topographic Map
+                </Link>
+              </Menu.Item>
+            </SubMenu>
             <Menu.Item key="2" icon={<AppleOutlined />}>
               <Link
                 to={`${AppRoutes.Avocado.replace(':plotType', 'scatter-plot')}`}
