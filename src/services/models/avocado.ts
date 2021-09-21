@@ -1,4 +1,6 @@
-export interface Avocado extends Record<string, number | string | undefined> {
+import { CSVRow } from './shared';
+
+export interface Avocado extends CSVRow {
   date?: string;
   averagePrice?: number;
   totalVolume?: number;

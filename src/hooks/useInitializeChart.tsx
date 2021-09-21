@@ -9,12 +9,14 @@ import {
   scaleOrdinal,
 } from 'd3';
 
+import { CSVRow } from '../services/models/shared';
+
 export const useInitializeChart = (
   chartDimensions: { width: number; height: number },
-  xValue: (row: Record<string, number | string | undefined>) => number,
-  yValue: (row: Record<string, number | string | undefined>) => number,
-  colorValue: (row: Record<string, number | string | undefined>) => string,
-  data?: DSVParsedArray<Record<string, number | string | undefined>>
+  xValue: (row: CSVRow) => number,
+  yValue: (row: CSVRow) => number,
+  colorValue: (row: CSVRow) => string,
+  data?: DSVParsedArray<CSVRow>
 ) => {
   const yRange = extent(data ?? [], yValue) as [number, number];
   const xRange = extent(data ?? [], xValue) as [number, number];

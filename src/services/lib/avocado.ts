@@ -27,6 +27,7 @@ const parseCSV: (
     region: row.region,
     month: date.getMonth() + 1,
     day: date.getDate(),
+    rowType: 'Avocado',
   };
 };
 

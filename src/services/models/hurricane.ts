@@ -1,12 +1,14 @@
-export interface Hurricane extends Record<string, number | string | undefined> {
+import { CSVRow } from './shared';
+
+export interface Hurricane extends CSVRow {
   id?: string;
   name?: string;
   date?: string;
   time?: number;
   event?: string;
   status?: string;
-  latitude?: string;
-  longitude?: string;
+  latitude?: number;
+  longitude?: number;
   maxWind?: number;
   minPressure?: number;
   lowWindNE?: number;
@@ -36,8 +38,8 @@ export const HurricaneCols = {
     title: 'Hurricane Status (Tropical Storm | Hurricane)',
     type: 'string',
   },
-  latitude: { title: 'Latitude Where Reading Was Taken', type: 'string' },
-  longitude: { title: 'Longitude Where Reading Was Taken', type: 'string' },
+  latitude: { title: 'Latitude Where Reading Was Taken', type: 'number' },
+  longitude: { title: 'Longitude Where Reading Was Taken', type: 'number' },
   maxWind: {
     title: 'Maximum Wind Recorded at Time of Measurement',
     type: 'number',

@@ -5,6 +5,22 @@ import { API } from '../apis';
 import { Hurricane } from '../models/hurricane';
 import { parse } from 'date-fns';
 
+const convertLatLong = (lat: string | undefined) => {
+  const direction = lat?.slice(-1);
+  const coordinate = Number(lat?.slice(0, -1));
+  let refinedCoordinate = 0;
+  switch (direction) {
+    case 'W':
+    case 'S':
+      refinedCoordinate = Number(coordinate) / -1;
+      break;
+    default:
+      refinedCoordinate = Number(coordinate);
+  }
+
+  return refinedCoordinate;
+};
+
 const parseCSV: (
   row: DSVRowString<string>,
   index: number,
@@ -19,8 +35,8 @@ const parseCSV: (
     time: Number(row.time),
     event: row.Event,
     status: row.Status,
-    latitude: row.Latitude,
-    longitude: row.Longitude,
+    latitude: convertLatLong(row.Latitude),
+    longitude: convertLatLong(row.Longitude),
     maxWind: Number(row['Maximum Wind']),
     minPressure: Number(row['Minimum Pressure']),
     lowWindNE: Number(row['Low Wind NE']),
@@ -38,6 +54,7 @@ const parseCSV: (
     year: date.getFullYear(),
     month: date.getMonth() + 1,
     day: date.getDate(),
+    rowType: 'Hurricane',
   };
 };
 

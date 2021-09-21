@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Col, Row, Select, Space, Typography } from 'antd';
 import {
   HurricaneCol,
@@ -7,10 +8,12 @@ import {
 
 import { ScatterPlot } from '../../components/ScatterPlot';
 import { SelectAxes } from '../../components/SelectAxes';
+import { TopoChart } from '../../components/TopoChart';
 import { csvFormat } from 'd3-dsv';
 import { useFallback } from '../../hooks/useFallback';
 import { useHurricaneQuery } from '../../services/hooks/useQuery';
 import { useInitializeChart } from '../../hooks/useInitializeChart';
+import { useParams } from 'react-router-dom';
 import { useResizeChart } from '../../hooks/useResizeChart';
 import { useState } from 'react';
 
@@ -20,6 +23,8 @@ const { Option } = Select;
 export interface HurricaneProps {}
 
 export const Hurricane: React.FC<HurricaneProps> = () => {
+  const { plotType } = useParams<{ plotType: string }>();
+
   const { data, isError, isLoading } = useHurricaneQuery();
   const [selectedColor, setSelectedColor] = useState<HurricaneCol>('status');
   const [xAxis, setXAxis] = useState<HurricaneCol>('year');
@@ -103,40 +108,47 @@ export const Hurricane: React.FC<HurricaneProps> = () => {
               <Text>Size: {Math.round(csvFormat(data).length / 1024)} kb</Text>
             </Space>
           </Col>
-          <Col sm={20} md={12} lg={15}>
-            <SelectAxes
-              id="hurricane"
-              selectedX={xAxis}
-              selectedY={yAxis}
-              selectedColor={selectedColor}
-              onSelectX={setXAxis as (xAxis: string) => void}
-              onSelectY={setYAxis as (yAxis: string) => void}
-              onSelectColor={setSelectedColor as (color: string) => void}
-              xOptions={xOptions}
-              yOptions={yOptions}
-              colorOptions={colorOptions}
-            />
-          </Col>
+          {plotType === 'scatter-plot' && (
+            <Col sm={20} md={12} lg={15}>
+              <SelectAxes
+                id="hurricane"
+                selectedX={xAxis}
+                selectedY={yAxis}
+                selectedColor={selectedColor}
+                onSelectX={setXAxis as (xAxis: string) => void}
+                onSelectY={setYAxis as (yAxis: string) => void}
+                onSelectColor={setSelectedColor as (color: string) => void}
+                xOptions={xOptions}
+                yOptions={yOptions}
+                colorOptions={colorOptions}
+              />
+            </Col>
+          )}
         </Row>
-        <ScatterPlot
-          width={width}
-          height={height}
-          paddedWidth={paddedWidth}
-          paddedHeight={paddedHeight}
-          margin={margin}
-          data={data}
-          xScale={xScale}
-          yScale={yScale}
-          colorScale={colorScale}
-          xValue={xValue}
-          yValue={yValue}
-          colorValue={colorValue}
-          xAxisLabel={xAxisLabel}
-          yAxisLabel={yAxisLabel}
-          radius={2}
-          xAxisLabelOffset={xAxisLabelOffset}
-          yAxisLabelOffset={yAxisLabelOffset}
-        />
+        {plotType === 'scatter-plot' && (
+          <ScatterPlot
+            width={width}
+            height={height}
+            paddedWidth={paddedWidth}
+            paddedHeight={paddedHeight}
+            margin={margin}
+            data={data}
+            xScale={xScale}
+            yScale={yScale}
+            colorScale={colorScale}
+            xValue={xValue}
+            yValue={yValue}
+            colorValue={colorValue}
+            xAxisLabel={xAxisLabel}
+            yAxisLabel={yAxisLabel}
+            radius={2}
+            xAxisLabelOffset={xAxisLabelOffset}
+            yAxisLabelOffset={yAxisLabelOffset}
+          />
+        )}
+        {plotType === 'topography' && (
+          <TopoChart width={width} height={height} rows={data} />
+        )}
       </Space>
     </div>
   );

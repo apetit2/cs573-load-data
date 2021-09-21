@@ -37,6 +37,7 @@ const parseCsv: (
       row['Department.Of.Labor.Cleaned.High.Value.2020.Dollars']
     ),
     footnote: row.Footnote,
+    rowType: 'MinWage',
   };
 };
 

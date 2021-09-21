@@ -16,6 +16,7 @@ import { Helmet } from 'react-helmet-async';
 import { Loading } from '../components/Loading/Loading';
 
 const { Content, Header } = Layout;
+const { SubMenu } = Menu;
 
 const MIN_WAGE_TITLE = 'Minimum Wage Data';
 const AVOCADO_TITLE = 'Avocado Data';
@@ -58,16 +59,46 @@ export const HomeLayout: React.FC<HomeLayoutProps> = () => {
           visible={collapsed}
           onClose={() => setCollapsed(false)}
         >
-          <Menu theme="dark" selectedKeys={[selectedTab]}>
+          <Menu theme="dark" selectedKeys={[selectedTab]} mode="inline">
             <Menu.Item key="1" icon={<DollarCircleOutlined />}>
-              <Link to={AppRoutes.MinimumWage}>{MIN_WAGE_TITLE}</Link>
+              <Link
+                to={`${AppRoutes.MinimumWage.replace(
+                  ':plotType',
+                  'scatter-plot'
+                )}`}
+              >
+                {MIN_WAGE_TITLE}
+              </Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<AppleOutlined />}>
-              <Link to={AppRoutes.Avocado}>{AVOCADO_TITLE}</Link>
+              <Link
+                to={`${AppRoutes.Avocado.replace(':plotType', 'scatter-plot')}`}
+              >
+                {AVOCADO_TITLE}
+              </Link>
             </Menu.Item>
-            <Menu.Item key="3" icon={<FireOutlined />}>
-              <Link to={AppRoutes.Hurricane}>{HURRICANE_TITLE}</Link>
-            </Menu.Item>
+            <SubMenu key="3" icon={<FireOutlined />} title={HURRICANE_TITLE}>
+              <Menu.Item key="3.1">
+                <Link
+                  to={`${AppRoutes.Hurricane.replace(
+                    ':plotType',
+                    'scatter-plot'
+                  )}`}
+                >
+                  Scatter Plot
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="3.2">
+                <Link
+                  to={`${AppRoutes.Hurricane.replace(
+                    ':plotType',
+                    'topography'
+                  )}`}
+                >
+                  Topographic Map
+                </Link>
+              </Menu.Item>
+            </SubMenu>
           </Menu>
         </Drawer>
         <Layout>

@@ -1,5 +1,3 @@
-export type KeysMatching<T, V> = NonNullable<
-  {
-    [K in keyof T]: T[K] extends V ? K : never;
-  }[keyof T]
->;
+export interface CSVRow extends Record<string, number | string | undefined> {
+  rowType: 'Hurricane' | 'Avocado' | 'MinWage';
+}

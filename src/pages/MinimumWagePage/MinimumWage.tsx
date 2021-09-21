@@ -7,10 +7,13 @@ import {
 
 import { ScatterPlot } from '../../components/ScatterPlot';
 import { SelectAxes } from '../../components/SelectAxes';
+import { TopoChart } from '../../components/TopoChart';
+import { YearSelector } from './components/YearSelector';
 import { csvFormat } from 'd3-dsv';
 import { useFallback } from '../../hooks/useFallback';
 import { useInitializeChart } from '../../hooks/useInitializeChart';
 import { useMinimumWageQuery } from '../../services/hooks/useQuery';
+import { useParams } from 'react-router-dom';
 import { useResizeChart } from '../../hooks/useResizeChart';
 import { useState } from 'react';
 
@@ -20,7 +23,10 @@ const { Option } = Select;
 export interface MinimumWageProps {}
 
 export const MinimumWage: React.FC<MinimumWageProps> = () => {
+  const { plotType } = useParams<{ plotType: string }>();
+
   const { data, isError, isLoading } = useMinimumWageQuery();
+  const [selectedYear, setSelectedYear] = useState<number>(1968);
   const [selectedColor, setSelectedColor] = useState<MinimumWageCol>('state');
   const [xAxis, setXAxis] = useState<MinimumWageCol>('year');
   const [yAxis, setYAxis] = useState<MinimumWageCol>(
@@ -110,39 +116,58 @@ export const MinimumWage: React.FC<MinimumWageProps> = () => {
             </Space>
           </Col>
           <Col sm={20} md={12} lg={15}>
-            <SelectAxes
-              id="minimum-wage"
-              selectedX={xAxis}
-              selectedY={yAxis}
-              selectedColor={selectedColor}
-              onSelectX={setXAxis as (xAxis: string) => void}
-              onSelectY={setYAxis as (yAxis: string) => void}
-              onSelectColor={setSelectedColor as (color: string) => void}
-              xOptions={xOptions}
-              yOptions={yOptions}
-              colorOptions={colorOptions}
-            />
+            {plotType === 'scatter-plot' && (
+              <SelectAxes
+                id="minimum-wage"
+                selectedX={xAxis}
+                selectedY={yAxis}
+                selectedColor={selectedColor}
+                onSelectX={setXAxis as (xAxis: string) => void}
+                onSelectY={setYAxis as (yAxis: string) => void}
+                onSelectColor={setSelectedColor as (color: string) => void}
+                xOptions={xOptions}
+                yOptions={yOptions}
+                colorOptions={colorOptions}
+              />
+            )}
+            {plotType === 'topography' && (
+              <YearSelector
+                minYear={data[0].year!}
+                maxYear={data[data.length - 1].year!}
+                onChange={setSelectedYear}
+              />
+            )}
           </Col>
         </Row>
-        <ScatterPlot
-          width={width}
-          height={height}
-          paddedWidth={paddedWidth}
-          paddedHeight={paddedHeight}
-          margin={margin}
-          data={data}
-          xScale={xScale}
-          yScale={yScale}
-          colorScale={colorScale}
-          xValue={xValue}
-          yValue={yValue}
-          colorValue={colorValue}
-          xAxisLabel={xAxisLabel}
-          yAxisLabel={yAxisLabel}
-          radius={2}
-          xAxisLabelOffset={xAxisLabelOffset}
-          yAxisLabelOffset={yAxisLabelOffset}
-        />
+        {plotType === 'scatter-plot' && (
+          <ScatterPlot
+            width={width}
+            height={height}
+            paddedWidth={paddedWidth}
+            paddedHeight={paddedHeight}
+            margin={margin}
+            data={data}
+            xScale={xScale}
+            yScale={yScale}
+            colorScale={colorScale}
+            xValue={xValue}
+            yValue={yValue}
+            colorValue={colorValue}
+            xAxisLabel={xAxisLabel}
+            yAxisLabel={yAxisLabel}
+            radius={2}
+            xAxisLabelOffset={xAxisLabelOffset}
+            yAxisLabelOffset={yAxisLabelOffset}
+          />
+        )}
+        {plotType === 'topography' && (
+          <TopoChart
+            width={width}
+            height={height}
+            rows={data}
+            year={selectedYear}
+          />
+        )}
       </Space>
     </div>
   );

@@ -1,5 +1,6 @@
-export interface MinimumWage
-  extends Record<string, number | string | undefined> {
+import { CSVRow } from './shared';
+
+export interface MinimumWage extends CSVRow {
   year?: number;
   state?: string;
   stateMinWage?: number;

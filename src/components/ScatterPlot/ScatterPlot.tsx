@@ -1,23 +1,23 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-array-index-key */
 import { DSVParsedArray, ScaleLinear, ScaleOrdinal } from 'd3';
 
 import { AxisBottom } from './AxisBottom';
 import { AxisLeft } from './AxisLeft';
+import { CSVRow } from '../../services/models/shared';
 
-export interface ScatterPlotProps<T> {
+export interface ScatterPlotProps {
   width: number | string;
   height: number | string;
   paddedWidth: number;
   paddedHeight: number;
   margin: { top: number; right: number; bottom: number; left: number };
-  data: DSVParsedArray<T>;
+  data: DSVParsedArray<CSVRow>;
   xScale: ScaleLinear<number, number, never>;
   yScale: ScaleLinear<number, number, never>;
   colorScale?: ScaleOrdinal<string, string, never>;
-  xValue: (row: T) => number;
-  yValue: (row: T) => number;
-  colorValue?: (row: T) => string;
+  xValue: (row: CSVRow) => number;
+  yValue: (row: CSVRow) => number;
+  colorValue?: (row: CSVRow) => string;
   xAxisLabel: string;
   yAxisLabel: string;
   xAxisLabelOffset: number;
@@ -26,9 +26,7 @@ export interface ScatterPlotProps<T> {
   opacity?: string;
 }
 
-export const ScatterPlot = <
-  T extends Record<string, number | string | undefined>
->({
+export const ScatterPlot: React.FC<ScatterPlotProps> = ({
   width,
   height,
   paddedWidth,
@@ -47,7 +45,7 @@ export const ScatterPlot = <
   yAxisLabelOffset,
   radius,
   opacity = '.3',
-}: ScatterPlotProps<T>) => {
+}) => {
   return (
     <svg width={width} height={height}>
       <g transform={`translate(${margin.left},${margin.top})`}>
