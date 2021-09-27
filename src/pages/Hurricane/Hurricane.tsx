@@ -121,7 +121,7 @@ export const Hurricane: React.FC<HurricaneProps> = () => {
         <Row style={{ width: '100%' }} justify="space-between" gutter={[0, 24]}>
           <Col xs={7}>
             <Text strong style={{ fontSize: 32 }}>
-              Pacific Typhoons{' '}
+              Pacific Hurricanes and Tropical Storms{' '}
               {plotType === 'scatter-plot'
                 ? 'Scatter Plot'
                 : 'Geospatial Chart'}
