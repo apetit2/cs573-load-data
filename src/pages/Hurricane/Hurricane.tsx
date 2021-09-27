@@ -98,9 +98,9 @@ export const Hurricane: React.FC<HurricaneProps> = () => {
     return (
       <>
         A {plotType === 'scatter-plot' ? 'scatter plot' : 'geospatial chart'}
-        depicting all pacific typhoons recorded off the coast of the United
-        States since 1949. {notShared} This chart visualizes data supplied by
-        NOAA. All data can be found in the{' '}
+        depicting all pacific hurricanes and tropical storms recorded off the
+        coast of the United States since 1949. {notShared} This chart visualizes
+        data supplied by NOAA. All data can be found in the{' '}
         <Link
           to={{
             pathname:
@@ -108,7 +108,7 @@ export const Hurricane: React.FC<HurricaneProps> = () => {
           }}
           target="_blank"
         >
-          Pacific Typhoon Dataset
+          Pacific Hurricane Dataset
         </Link>
         .
       </>
@@ -181,7 +181,7 @@ export const Hurricane: React.FC<HurricaneProps> = () => {
           {plotType === 'topography' && (
             <Text style={{ fontSize: 14 }}>
               {generateDescription(
-                'Each circle represents a typhoon spotted at various spots in the pacific ocean.'
+                'Each circle represents a hurricane or tropical storm spotted at various spots in the pacific ocean.'
               )}
             </Text>
           )}
