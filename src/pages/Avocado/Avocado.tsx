@@ -5,9 +5,9 @@ import {
 } from '../../services/models/avocado';
 import { Col, Row, Select, Space, Typography } from 'antd';
 
+import { Link } from 'react-router-dom';
 import { ScatterPlot } from '../../components/ScatterPlot';
 import { SelectAxes } from '../../components/SelectAxes';
-import { csvFormat } from 'd3-dsv';
 import { useAvocadoQuery } from '../../services/hooks/useQuery';
 import { useFallback } from '../../hooks/useFallback';
 import { useInitializeChart } from '../../hooks/useInitializeChart';
@@ -77,19 +77,36 @@ export const Avocado: React.FC<AvocadoProps> = () => {
     return <Text strong>No Data Found.</Text>;
   }
 
+  const generateDescription = (notShared: string) => {
+    return (
+      <>
+        A scatter plot depicting avocado prices in all U.S states from 2015 to
+        2018. {notShared} This chart visualizes data supplied by the Hass
+        Avocado Board. All data can be found in the{' '}
+        <Link
+          to={{
+            pathname:
+              'https://gist.github.com/apetit2/a3a8f61f0c56a1d1448804a584b7c1bb',
+          }}
+          target="_blank"
+        >
+          Avocado Price Dataset
+        </Link>
+        .
+      </>
+    );
+  };
+
   return (
     <div style={{ width: '100%' }} ref={(el) => setContainerDiv(el)}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <Row style={{ width: '100%' }} justify="space-between" gutter={[0, 24]}>
-          <Col sm={20} md={8} lg={5}>
-            <Space direction="vertical" size="middle">
-              <Text strong>Avocado Data Info</Text>
-              <Text>Number of Rows: {data.length}</Text>
-              <Text>Number of Columns: {Object.keys(data[0]).length}</Text>
-              <Text>Size: {Math.round(csvFormat(data).length / 1024)} kb</Text>
-            </Space>
+          <Col xs={7}>
+            <Text strong style={{ fontSize: 32 }}>
+              Avocado Scatter Plot
+            </Text>
           </Col>
-          <Col sm={20} md={12} lg={15}>
+          <Col xs={13}>
             <SelectAxes
               id="avocado"
               selectedX={xAxis}
@@ -123,6 +140,15 @@ export const Avocado: React.FC<AvocadoProps> = () => {
           xAxisLabelOffset={xAxisLabelOffset}
           yAxisLabelOffset={yAxisLabelOffset}
         />
+      </Space>
+      <Space direction="vertical">
+        <Text strong style={{ fontSize: 24 }}>
+          Description
+        </Text>
+        <Text style={{ fontSize: 14 }}>
+          {generateDescription(`The current view shows ${yAxisLabel} in
+              relation to ${xAxisLabel}. Each circle color represents ${selectedColor}`)}
+        </Text>
       </Space>
     </div>
   );
