@@ -3,4 +3,5 @@ export const AppRoutes = {
   MinimumWage: '/minimum-wage/:plotType',
   Avocado: '/avocado/:plotType',
   Hurricane: '/hurricane/:plotType',
+  CSVInfo: '/csv/:type',
 };

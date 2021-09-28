@@ -10,14 +10,28 @@ import { fetchAvocadoCSV } from '../lib/avocado';
 import { fetchHurricaneCSV } from '../lib/hurricane';
 import { fetchMinimumWageCSV } from '../lib/minimumWage';
 
-const useMinimumWageQuery = () =>
-  useQuery<DSVParsedArray<MinimumWage>, Error>('minWage', fetchMinimumWageCSV);
+const useMinimumWageQuery = (
+  options?: UseQueryOptions<DSVParsedArray<MinimumWage>, Error>
+) =>
+  useQuery<DSVParsedArray<MinimumWage>, Error>(
+    'minWage',
+    fetchMinimumWageCSV,
+    options
+  );
 
-const useAvocadoQuery = () =>
-  useQuery<DSVParsedArray<Avocado>, Error>('avocado', fetchAvocadoCSV);
+const useAvocadoQuery = (
+  options?: UseQueryOptions<DSVParsedArray<Avocado>, Error>
+) =>
+  useQuery<DSVParsedArray<Avocado>, Error>('avocado', fetchAvocadoCSV, options);
 
-const useHurricaneQuery = () =>
-  useQuery<DSVParsedArray<Hurricane>, Error>('hurricane', fetchHurricaneCSV);
+const useHurricaneQuery = (
+  options?: UseQueryOptions<DSVParsedArray<Hurricane>, Error>
+) =>
+  useQuery<DSVParsedArray<Hurricane>, Error>(
+    'hurricane',
+    fetchHurricaneCSV,
+    options
+  );
 
 const useWorldMapQuery = (options?: UseQueryOptions<WorldMap, Error>) =>
   useQuery<WorldMap, Error>('worldMap', fetchWorldMap, options);

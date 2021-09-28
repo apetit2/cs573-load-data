@@ -82,17 +82,32 @@ export const HomeLayout: React.FC<HomeLayoutProps> = () => {
                     'topography'
                   )}`}
                 >
-                  Topographic Map
+                  Geospatial Chart
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="1.3">
+                <Link to={`${AppRoutes.CSVInfo.replace(':type', 'min-wage')}`}>
+                  Dataset Information
                 </Link>
               </Menu.Item>
             </SubMenu>
-            <Menu.Item key="2" icon={<AppleOutlined />}>
-              <Link
-                to={`${AppRoutes.Avocado.replace(':plotType', 'scatter-plot')}`}
-              >
-                {AVOCADO_TITLE}
-              </Link>
-            </Menu.Item>
+            <SubMenu key="2" icon={<AppleOutlined />} title={AVOCADO_TITLE}>
+              <Menu.Item key="2.1">
+                <Link
+                  to={`${AppRoutes.Avocado.replace(
+                    ':plotType',
+                    'scatter-plot'
+                  )}`}
+                >
+                  Scatter Plot
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="2.2">
+                <Link to={`${AppRoutes.CSVInfo.replace(':type', 'avocado')}`}>
+                  Dataset Information
+                </Link>
+              </Menu.Item>
+            </SubMenu>
             <SubMenu key="3" icon={<FireOutlined />} title={HURRICANE_TITLE}>
               <Menu.Item key="3.1">
                 <Link
@@ -111,7 +126,12 @@ export const HomeLayout: React.FC<HomeLayoutProps> = () => {
                     'topography'
                   )}`}
                 >
-                  Topographic Map
+                  Geospatial Chart
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="3.3">
+                <Link to={`${AppRoutes.CSVInfo.replace(':type', 'hurricane')}`}>
+                  Dataset Information
                 </Link>
               </Menu.Item>
             </SubMenu>
