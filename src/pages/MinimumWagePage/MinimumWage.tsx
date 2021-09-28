@@ -1,4 +1,4 @@
-import { Col, Row, Select, Space, Typography } from 'antd';
+import { Col, Divider, Row, Select, Space, Typography } from 'antd';
 import { Link, useParams } from 'react-router-dom';
 import {
   MinimumWageCol,
@@ -6,11 +6,14 @@ import {
   MinimumWage as MinimumWageModel,
 } from '../../services/models/minimumWage';
 
+import { BetterTopoChart } from '../../components/BetterTopoChart';
+import { BetterYearSelector } from './components/BetterYearSelector';
 import { ScatterPlot } from '../../components/ScatterPlot';
 import { SelectAxes } from '../../components/SelectAxes';
 import { TopoChart } from '../../components/TopoChart';
 import { YearSelector } from './components/YearSelector';
 import { useFallback } from '../../hooks/useFallback';
+import { useIncrementYear } from '../../hooks/useIncrementYear';
 import { useInitializeChart } from '../../hooks/useInitializeChart';
 import { useMinimumWageQuery } from '../../services/hooks/useQuery';
 import { useResizeChart } from '../../hooks/useResizeChart';
@@ -22,14 +25,26 @@ const { Option } = Select;
 export interface MinimumWageProps {}
 
 export const MinimumWage: React.FC<MinimumWageProps> = () => {
-  const { plotType } = useParams<{ plotType: string }>();
+  const { plotType } = useParams<{
+    plotType: 'scatter-plot' | 'topography' | 'geospatial-chart-iterated';
+  }>();
 
   const { data, isError, isLoading } = useMinimumWageQuery();
+  const [shouldDisableAutoIncrementYear, setShouldDisableAutoIncrementYear] =
+    useState(true);
   const [selectedYear, setSelectedYear] = useState<number>(1968);
   const [selectedColor, setSelectedColor] = useState<MinimumWageCol>('state');
   const [xAxis, setXAxis] = useState<MinimumWageCol>('year');
   const [yAxis, setYAxis] = useState<MinimumWageCol>(
     'effectiveMinWageTodayDollars'
+  );
+
+  useIncrementYear(
+    2020,
+    1968,
+    plotType === 'geospatial-chart-iterated' && !shouldDisableAutoIncrementYear,
+    selectedYear,
+    setSelectedYear
   );
 
   // minimum wage specific
@@ -102,13 +117,13 @@ export const MinimumWage: React.FC<MinimumWageProps> = () => {
     return <Text strong>No Data Found.</Text>;
   }
 
-  const generateDescription = (notShared: string) => {
+  const generateDescription = () => {
     return (
       <>
-        A {plotType === 'scatter-plot' ? 'scatter plot' : 'geospatial chart'}
-        depicting minimum wage data for all U.S states and territories since
-        1968. {notShared} This chart visualizes data supplied by the U.S
-        Department of Labor. All data can be found in the{' '}
+        A {plotType === 'scatter-plot' ? 'scatter plot' : 'geospatial chart'}{' '}
+        depicting effective minimum wage data for all U.S states and territories
+        since 1968. It visualizes data supplied by the U.S Department of Labor.
+        All data can be found in the{' '}
         <Link
           to={{
             pathname:
@@ -157,6 +172,16 @@ export const MinimumWage: React.FC<MinimumWageProps> = () => {
                 onChange={setSelectedYear}
               />
             )}
+            {plotType === 'geospatial-chart-iterated' && (
+              <BetterYearSelector
+                defaultYear={selectedYear}
+                minYear={data[0].year!}
+                maxYear={data[data.length - 1].year!}
+                incrementYearDisabled={shouldDisableAutoIncrementYear}
+                toggleIncrementYear={setShouldDisableAutoIncrementYear}
+                onChange={setSelectedYear}
+              />
+            )}
           </Col>
         </Row>
         {plotType === 'scatter-plot' && (
@@ -188,22 +213,72 @@ export const MinimumWage: React.FC<MinimumWageProps> = () => {
             year={selectedYear}
           />
         )}
+        {plotType === 'geospatial-chart-iterated' && (
+          <BetterTopoChart
+            width={width}
+            height={height}
+            rows={data}
+            year={selectedYear}
+          />
+        )}
         <Space direction="vertical">
           <Text strong style={{ fontSize: 24 }}>
             Description
           </Text>
           {plotType === 'scatter-plot' && (
-            <Text style={{ fontSize: 14 }}>
-              {generateDescription(`The current view shows ${yAxisLabel} in
-              relation to ${xAxisLabel}. Each circle color represents ${selectedColor}`)}
-            </Text>
+            <>
+              <Text style={{ fontSize: 14 }}>{generateDescription()}</Text>
+              <ul>
+                <li>
+                  The current view shows ${yAxisLabel} in relation to{' '}
+                  {xAxisLabel}.
+                </li>
+                <li>Each circle color represents {selectedColor}</li>
+              </ul>
+            </>
           )}
-          {plotType === 'topography' && (
-            <Text style={{ fontSize: 14 }}>
-              {generateDescription(
-                'Darker state colors represent higher minimum wages.'
-              )}
-            </Text>
+          {(plotType === 'topography' ||
+            plotType === 'geospatial-chart-iterated') && (
+            <>
+              <Text style={{ fontSize: 14 }}>{generateDescription()}</Text>
+              <ul>
+                <li>Dollar amounts shown are in 2020 dollars.</li>
+                <li>Darker state colors represent higher minimum wages.</li>
+              </ul>
+            </>
+          )}
+          {plotType === 'geospatial-chart-iterated' && (
+            <>
+              <Divider />
+              <Text strong style={{ fontSize: 24 }}>
+                What&apos;s New
+              </Text>
+              <ul>
+                <li>Toggle that automates year incrementation</li>
+                <li>
+                  Legend showing what colors represent on the geospatial chart
+                </li>
+                <li>
+                  When hovering on a state, show the effective minimum wage for
+                  that state in a box below the chart
+                </li>
+                <li>Zoom and pan functionality is working.</li>
+              </ul>
+              <Divider />
+              <Text strong style={{ fontSize: 24 }}>
+                Still To Do
+              </Text>
+              <ul>
+                <li>
+                  For smaller screen sizes, figure out why the chart does not
+                  center properly on load
+                </li>
+                <li>
+                  Implement an actual tooltip that appears when hovering on a
+                  state
+                </li>
+              </ul>
+            </>
           )}
         </Space>
       </Space>

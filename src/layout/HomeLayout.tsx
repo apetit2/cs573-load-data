@@ -82,12 +82,22 @@ export const HomeLayout: React.FC<HomeLayoutProps> = () => {
                     'topography'
                   )}`}
                 >
-                  Geospatial Chart
+                  Geospatial Chart (Initial)
                 </Link>
               </Menu.Item>
               <Menu.Item key="1.3">
                 <Link to={`${AppRoutes.CSVInfo.replace(':type', 'min-wage')}`}>
                   Dataset Information
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="1.4">
+                <Link
+                  to={`${AppRoutes.MinimumWage.replace(
+                    ':plotType',
+                    'geospatial-chart-iterated'
+                  )}`}
+                >
+                  Geospatial Chart (Iterated)
                 </Link>
               </Menu.Item>
             </SubMenu>
