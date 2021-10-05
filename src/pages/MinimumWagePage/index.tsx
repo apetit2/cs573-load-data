@@ -1,1 +1,1 @@
-export { MinimumWage as default } from './MinimumWage';
+export { MinimumWagePage as default } from './MinimumWage';

@@ -19,57 +19,23 @@ export interface MinimumWage extends CSVRow {
 }
 
 export const MinimumWageCols = {
-  year: { title: 'Year', type: 'number' },
-  state: { title: 'State', type: 'string' },
-  stateMinWage: { title: 'State Minimum Wage', type: 'number' },
-  stateMinWageTodayDollars: {
-    title: 'State Minimum Wage (2020 Dollars)',
-    type: 'number',
-  },
-  federalMinWage: { title: 'Federal Minimum Wage', type: 'number' },
-  federalMinWageTodayDollars: {
-    title: 'Federal Minimum Wage (2020 Dollars)',
-    type: 'number',
-  },
-  effectiveMinWage: { title: 'Effective Minimum Wage', type: 'number' },
-  effectiveMinWageTodayDollars: {
-    title: 'Effective Minimum Wage (2020 Dollars)',
-    type: 'number',
-  },
-  cpiAverage: { title: 'Average Consumer Price Index', type: 'number' },
-  depLaborUncleanData: { title: 'Dep. Of Labor Unclean Data', type: 'string' },
-  depLaborCleanedLowValue: {
-    title: 'Dep. Of Labor Cleaned Low Value',
-    type: 'number',
-  },
-  depLaborCleanedLowValueTodayDollars: {
-    title: 'Dep. Of Labor Cleaned Low Value (2020 Dollars)',
-    type: 'number',
-  },
-  depLaborCleanedHighValue: {
-    title: 'Dep. Of Labor Cleaned High Value',
-    type: 'number',
-  },
-  depLaborCleanedHighValueTodayDollars: {
-    title: 'Dep. Of Labor Cleaned High Value (2020 Dollars)',
-    type: 'number',
-  },
-  footnote: { title: 'Footnote', type: 'string' },
+  year: 'Year',
+  state: 'State',
+  stateMinWage: 'State Minimum Wage',
+  stateMinWageTodayDollars: 'State Minimum Wage (2020 Dollars)',
+  federalMinWage: 'Federal Minimum Wage',
+  federalMinWageTodayDollars: 'Federal Minimum Wage (2020 Dollars)',
+  effectiveMinWage: 'Effective Minimum Wage',
+  effectiveMinWageTodayDollars: 'Effective Minimum Wage (2020 Dollars)',
+  cpiAverage: 'Average Consumer Price Index',
+  depLaborUncleanData: 'Dep. Of Labor Unclean Data',
+  depLaborCleanedLowValue: 'Dep. Of Labor Cleaned Low Value',
+  depLaborCleanedLowValueTodayDollars:
+    'Dep. Of Labor Cleaned Low Value (2020 Dollars)',
+  depLaborCleanedHighValue: 'Dep. Of Labor Cleaned High Value',
+  depLaborCleanedHighValueTodayDollars:
+    'Dep. Of Labor Cleaned High Value (2020 Dollars)',
+  footnote: 'Footnote',
 } as const;
 
-export type MinimumWageCol =
-  | 'year'
-  | 'state'
-  | 'stateMinWage'
-  | 'stateMinWageTodayDollars'
-  | 'federalMinWage'
-  | 'federalMinWageTodayDollars'
-  | 'effectiveMinWage'
-  | 'effectiveMinWageTodayDollars'
-  | 'cpiAverage'
-  | 'depLaborUncleanData'
-  | 'depLaborCleanedLowValue'
-  | 'depLaborCleanedLowValueTodayDollars'
-  | 'depLaborCleanedHighValue'
-  | 'depLaborCleanedHighValueTodayDollars'
-  | 'footnote';
+export type MinimumWageCol = typeof MinimumWageCols;

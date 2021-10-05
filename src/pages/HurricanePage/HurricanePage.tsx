@@ -1,87 +1,41 @@
-import { Col, Row, Select, Space, Typography } from 'antd';
+import { Col, Row, Space, Typography } from 'antd';
 import {
-  HurricaneCol,
   HurricaneCols,
   Hurricane as HurricaneModel,
 } from '../../services/models/hurricane';
 import { Link, useParams } from 'react-router-dom';
 
+import { KeysMatching } from '../../types/shared';
 import { ScatterPlot } from '../../components/ScatterPlot';
 import { SelectAxes } from '../../components/SelectAxes';
 import { TopoChart } from '../../components/TopoChart';
 import { useFallback } from '../../hooks/useFallback';
 import { useHurricaneQuery } from '../../services/hooks/useQuery';
-import { useInitializeChart } from '../../hooks/useInitializeChart';
 import { useResizeChart } from '../../hooks/useResizeChart';
 import { useState } from 'react';
 
 const { Text } = Typography;
-const { Option } = Select;
 
-export interface HurricaneProps {}
+export interface HurricanePageProps {}
 
-export const Hurricane: React.FC<HurricaneProps> = () => {
+export const HurricanePage: React.FC<HurricanePageProps> = () => {
   const { plotType } = useParams<{ plotType: string }>();
 
   const { data, isError, isLoading } = useHurricaneQuery();
-  const [selectedColor, setSelectedColor] = useState<HurricaneCol>('status');
-  const [xAxis, setXAxis] = useState<HurricaneCol>('year');
-  const [yAxis, setYAxis] = useState<HurricaneCol>('maxWind');
+  const [selectedColor, setSelectedColor] =
+    useState<KeysMatching<HurricaneModel, string | undefined>>('status');
+  const [xAxis, setXAxis] =
+    useState<KeysMatching<HurricaneModel, number | undefined>>('year');
+  const [yAxis, setYAxis] =
+    useState<KeysMatching<HurricaneModel, number | undefined>>('maxWind');
 
   // hurricane specific
-  const xValue = (row: HurricaneModel) => row[xAxis] as number;
-  const xAxisLabel = HurricaneCols[xAxis].title;
-  const yValue = (row: HurricaneModel) => row[yAxis] as number;
-  const yAxisLabel = HurricaneCols[yAxis].title;
-  const colorValue = (row: HurricaneModel) => row[selectedColor] as string;
-
-  const xOptions = (Object.keys(HurricaneCols) as HurricaneCol[]).map((key) => (
-    <Option
-      value={key}
-      key={key}
-      disabled={HurricaneCols[key].type !== 'number'}
-    >
-      {HurricaneCols[key].title}
-    </Option>
-  ));
-
-  const yOptions = (Object.keys(HurricaneCols) as HurricaneCol[]).map((key) => (
-    <Option
-      value={key}
-      key={key}
-      disabled={HurricaneCols[key].type !== 'number'}
-    >
-      {HurricaneCols[key].title}
-    </Option>
-  ));
-
-  const colorOptions = (Object.keys(HurricaneCols) as HurricaneCol[]).map(
-    (key) => (
-      <Option
-        value={key}
-        key={key}
-        disabled={HurricaneCols[key].type !== 'string'}
-      >
-        {HurricaneCols[key].title}
-      </Option>
-    )
-  );
+  const xAxisLabel = HurricaneCols[xAxis];
+  const yAxisLabel = HurricaneCols[yAxis];
 
   const { fallback } = useFallback(isLoading, isError, 'Hurricane');
 
   const { dimensions, setContainerDiv } = useResizeChart();
-  const {
-    height,
-    width,
-    margin,
-    paddedHeight,
-    paddedWidth,
-    xAxisLabelOffset,
-    yAxisLabelOffset,
-    xScale,
-    yScale,
-    colorScale,
-  } = useInitializeChart(dimensions, xValue, yValue, colorValue, data);
 
   // for error / loading states
   if (fallback) {
@@ -129,44 +83,36 @@ export const Hurricane: React.FC<HurricaneProps> = () => {
           </Col>
           {plotType === 'scatter-plot' && (
             <Col sm={13}>
-              <SelectAxes
+              <SelectAxes<HurricaneModel>
                 id="hurricane"
                 selectedX={xAxis}
                 selectedY={yAxis}
                 selectedColor={selectedColor}
-                onSelectX={setXAxis as (xAxis: string) => void}
-                onSelectY={setYAxis as (yAxis: string) => void}
-                onSelectColor={setSelectedColor as (color: string) => void}
-                xOptions={xOptions}
-                yOptions={yOptions}
-                colorOptions={colorOptions}
+                onSelectX={setXAxis}
+                onSelectY={setYAxis}
+                onSelectColor={setSelectedColor}
+                data={data}
+                labels={HurricaneCols}
               />
             </Col>
           )}
         </Row>
         {plotType === 'scatter-plot' && (
           <ScatterPlot
-            width={width}
-            height={height}
-            paddedWidth={paddedWidth}
-            paddedHeight={paddedHeight}
-            margin={margin}
+            width={dimensions.width}
+            height={400}
+            margin={{ top: 30, right: 30, bottom: 50, left: 0 }}
             data={data}
-            xScale={xScale}
-            yScale={yScale}
-            colorScale={colorScale}
-            xValue={xValue}
-            yValue={yValue}
-            colorValue={colorValue}
-            xAxisLabel={xAxisLabel}
-            yAxisLabel={yAxisLabel}
+            xLabel={xAxisLabel}
+            yLabel={yAxisLabel}
             radius={2}
-            xAxisLabelOffset={xAxisLabelOffset}
-            yAxisLabelOffset={yAxisLabelOffset}
+            x={xAxis}
+            y={yAxis}
+            color={selectedColor}
           />
         )}
         {plotType === 'topography' && (
-          <TopoChart width={width} height={height} rows={data} />
+          <TopoChart width={dimensions.width} height={400} rows={data} />
         )}
         <Space direction="vertical">
           <Text strong style={{ fontSize: 24 }}>

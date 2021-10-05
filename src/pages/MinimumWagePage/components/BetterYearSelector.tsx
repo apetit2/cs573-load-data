@@ -19,8 +19,6 @@ export const BetterYearSelector: React.FC<BetterYearSelectorProps> = ({
   onChange,
   toggleIncrementYear,
 }) => {
-  // console.log(defaultYear);
-
   return (
     <Space style={{ width: '100%' }} direction="vertical">
       <Space

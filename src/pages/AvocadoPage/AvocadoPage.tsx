@@ -1,70 +1,38 @@
 import {
-  AvocadoCol,
   AvocadoCols,
   Avocado as AvocadoModel,
 } from '../../services/models/avocado';
-import { Col, Row, Select, Space, Typography } from 'antd';
+import { Col, Row, Space, Typography } from 'antd';
 
+import { KeysMatching } from '../../types/shared';
 import { Link } from 'react-router-dom';
 import { ScatterPlot } from '../../components/ScatterPlot';
 import { SelectAxes } from '../../components/SelectAxes';
 import { useAvocadoQuery } from '../../services/hooks/useQuery';
 import { useFallback } from '../../hooks/useFallback';
-import { useInitializeChart } from '../../hooks/useInitializeChart';
 import { useResizeChart } from '../../hooks/useResizeChart';
 import { useState } from 'react';
 
 const { Text } = Typography;
-const { Option } = Select;
 
-export interface AvocadoProps {}
+export interface AvocadoPageProps {}
 
-export const Avocado: React.FC<AvocadoProps> = () => {
+export const AvocadoPage: React.FC<AvocadoPageProps> = () => {
   const { data, isError, isLoading } = useAvocadoQuery();
-  const [selectedColor, setSelectedColor] = useState<AvocadoCol>('type');
-  const [xAxis, setXAxis] = useState<AvocadoCol>('month');
-  const [yAxis, setYAxis] = useState<AvocadoCol>('averagePrice');
+  const [selectedColor, setSelectedColor] =
+    useState<KeysMatching<AvocadoModel, string | undefined>>('type');
+  const [xAxis, setXAxis] =
+    useState<KeysMatching<AvocadoModel, number | undefined>>('month');
+  const [yAxis, setYAxis] =
+    useState<KeysMatching<AvocadoModel, number | undefined>>('averagePrice');
 
   // avocado specific
-  const xValue = (row: AvocadoModel) => row[xAxis] as number;
-  const xAxisLabel = AvocadoCols[xAxis].title;
-  const yValue = (row: AvocadoModel) => row[yAxis] as number;
-  const yAxisLabel = AvocadoCols[yAxis].title;
-  const colorValue = (row: AvocadoModel) => row[selectedColor] as string;
-
-  const xOptions = (Object.keys(AvocadoCols) as AvocadoCol[]).map((key) => (
-    <Option value={key} key={key} disabled={AvocadoCols[key].type !== 'number'}>
-      {AvocadoCols[key].title}
-    </Option>
-  ));
-
-  const yOptions = (Object.keys(AvocadoCols) as AvocadoCol[]).map((key) => (
-    <Option value={key} key={key} disabled={AvocadoCols[key].type !== 'number'}>
-      {AvocadoCols[key].title}
-    </Option>
-  ));
-
-  const colorOptions = (Object.keys(AvocadoCols) as AvocadoCol[]).map((key) => (
-    <Option value={key} key={key} disabled={AvocadoCols[key].type !== 'string'}>
-      {AvocadoCols[key].title}
-    </Option>
-  ));
+  const xAxisLabel = AvocadoCols[xAxis];
+  const yAxisLabel = AvocadoCols[yAxis];
 
   const { fallback } = useFallback(isLoading, isError, 'Avocado');
 
   const { dimensions, setContainerDiv } = useResizeChart();
-  const {
-    height,
-    width,
-    margin,
-    paddedHeight,
-    paddedWidth,
-    xAxisLabelOffset,
-    yAxisLabelOffset,
-    xScale,
-    yScale,
-    colorScale,
-  } = useInitializeChart(dimensions, xValue, yValue, colorValue, data);
 
   // for error / loading states
   if (fallback) {
@@ -107,38 +75,30 @@ export const Avocado: React.FC<AvocadoProps> = () => {
             </Text>
           </Col>
           <Col xs={13}>
-            <SelectAxes
+            <SelectAxes<AvocadoModel>
               id="avocado"
               selectedX={xAxis}
               selectedY={yAxis}
               selectedColor={selectedColor}
-              onSelectX={setXAxis as (xAxis: string) => void}
-              onSelectY={setYAxis as (yAxis: string) => void}
-              onSelectColor={setSelectedColor as (color: string) => void}
-              xOptions={xOptions}
-              yOptions={yOptions}
-              colorOptions={colorOptions}
+              onSelectX={setXAxis}
+              onSelectY={setYAxis}
+              onSelectColor={setSelectedColor}
+              data={data}
+              labels={AvocadoCols}
             />
           </Col>
         </Row>
-        <ScatterPlot
-          width={width}
-          height={height}
-          paddedWidth={paddedWidth}
-          paddedHeight={paddedHeight}
-          margin={margin}
+        <ScatterPlot<AvocadoModel>
+          width={dimensions.width}
+          height={400}
+          margin={{ top: 30, right: 30, bottom: 50, left: 0 }}
           data={data}
-          xScale={xScale}
-          yScale={yScale}
-          colorScale={colorScale}
-          xValue={xValue}
-          yValue={yValue}
-          colorValue={colorValue}
-          xAxisLabel={xAxisLabel}
-          yAxisLabel={yAxisLabel}
+          x={xAxis}
+          y={yAxis}
+          color={selectedColor}
+          xLabel={xAxisLabel}
+          yLabel={yAxisLabel}
           radius={2}
-          xAxisLabelOffset={xAxisLabelOffset}
-          yAxisLabelOffset={yAxisLabelOffset}
         />
       </Space>
       <Space direction="vertical">

@@ -100,6 +100,13 @@ export const HomeLayout: React.FC<HomeLayoutProps> = () => {
                   Geospatial Chart (Iterated)
                 </Link>
               </Menu.Item>
+              <Menu.Item key="1.5">
+                <Link
+                  to={`${AppRoutes.MinimumWage.replace(':plotType', 'line')}`}
+                >
+                  Line Plot
+                </Link>
+              </Menu.Item>
             </SubMenu>
             <SubMenu key="2" icon={<AppleOutlined />} title={AVOCADO_TITLE}>
               <Menu.Item key="2.1">

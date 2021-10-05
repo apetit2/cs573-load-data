@@ -29,65 +29,31 @@ export interface Hurricane extends CSVRow {
 }
 
 export const HurricaneCols = {
-  id: { title: 'ID', type: 'string' },
-  name: { title: 'Hurricane Name', type: 'string' },
-  date: { title: 'Date Measurement Recorded', type: 'string' },
-  time: { title: 'Time Measurement Recorded', type: 'number' },
-  event: { title: 'Event', type: 'string' },
-  status: {
-    title: 'Hurricane Status (Tropical Storm | Hurricane)',
-    type: 'string',
-  },
-  latitude: { title: 'Latitude Where Reading Was Taken', type: 'number' },
-  longitude: { title: 'Longitude Where Reading Was Taken', type: 'number' },
-  maxWind: {
-    title: 'Maximum Wind Recorded at Time of Measurement',
-    type: 'number',
-  },
-  minPressure: {
-    title: 'Minimum Pressure Recorded at Time of Measurment',
-    type: 'number',
-  },
-  lowWindNE: { title: 'Low Wind NE', type: 'number' },
-  lowWindSE: { title: 'Low Wind SE', type: 'number' },
-  lowWindSW: { title: 'Low Wind SW', type: 'number' },
-  lowWindNW: { title: 'Low Wind NW', type: 'number' },
-  moderateWindNE: { title: 'Moderate Wind NE', type: 'number' },
-  moderateWindSE: { title: 'Moderate Wind SE', type: 'number' },
-  moderateWindSW: { title: 'Moderate Wind SW', type: 'number' },
-  moderateWindNW: { title: 'Moderate Wind NW', type: 'number' },
-  highWindNE: { title: 'High Wind NE', type: 'number' },
-  highWindSE: { title: 'High Wind SE', type: 'number' },
-  highWindSW: { title: 'High Wind SW', type: 'number' },
-  highWindNW: { title: 'High Wind NW', type: 'number' },
-  year: { title: 'Year Measured', type: 'number' },
-  month: { title: 'Month Measured', type: 'number' },
-  day: { title: 'Day Measured', type: 'number' },
+  id: 'ID',
+  name: 'Hurricane Name',
+  date: 'Date Measurement Recorded',
+  time: 'Time Measurement Recorded',
+  event: 'Event',
+  status: 'Hurricane Status (Tropical Storm | Hurricane)',
+  latitude: 'Latitude Where Reading Was Taken',
+  longitude: 'Longitude Where Reading Was Taken',
+  maxWind: 'Maximum Wind Recorded at Time of Measurement',
+  minPressure: 'Minimum Pressure Recorded at Time of Measurment',
+  lowWindNE: 'Low Wind NE',
+  lowWindSE: 'Low Wind SE',
+  lowWindSW: 'Low Wind SW',
+  lowWindNW: 'Low Wind NW',
+  moderateWindNE: 'Moderate Wind NE',
+  moderateWindSE: 'Moderate Wind SE',
+  moderateWindSW: 'Moderate Wind SW',
+  moderateWindNW: 'Moderate Wind NW',
+  highWindNE: 'High Wind NE',
+  highWindSE: 'High Wind SE',
+  highWindSW: 'High Wind SW',
+  highWindNW: 'High Wind NW',
+  year: 'Year Measured',
+  month: 'Month Measured',
+  day: 'Day Measured',
 } as const;
 
-export type HurricaneCol =
-  | 'id'
-  | 'name'
-  | 'date'
-  | 'time'
-  | 'event'
-  | 'status'
-  | 'latitude'
-  | 'longitude'
-  | 'maxWind'
-  | 'minPressure'
-  | 'lowWindNE'
-  | 'lowWindSE'
-  | 'lowWindSW'
-  | 'lowWindNW'
-  | 'moderateWindNE'
-  | 'moderateWindSE'
-  | 'moderateWindSW'
-  | 'moderateWindNW'
-  | 'highWindNE'
-  | 'highWindSE'
-  | 'highWindSW'
-  | 'highWindNW'
-  | 'year'
-  | 'month'
-  | 'day';
+export type HurricaneCol = typeof HurricaneCols;

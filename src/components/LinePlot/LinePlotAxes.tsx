@@ -8,29 +8,37 @@ import { PropsWithChildren } from 'react';
 const { Text } = Typography;
 const { Option } = Select;
 
-export interface SelectAxesProps<T extends CSVRow> {
+export interface LinePlotAxesProps<T extends CSVRow> {
   id: string;
   selectedX: KeysMatching<T, number | undefined>;
   selectedY: KeysMatching<T, number | undefined>;
-  selectedColor: KeysMatching<T, string | undefined>;
+  selectedGrouping: KeysMatching<T, string | undefined>;
+  selectedFilter: string;
   onSelectX: (xAxis: KeysMatching<T, number | undefined>) => void;
   onSelectY: (yAxis: KeysMatching<T, number | undefined>) => void;
-  onSelectColor: (color: KeysMatching<T, string | undefined>) => void;
+  onSelectGrouping: (grouping: KeysMatching<T, string | undefined>) => void;
+  onSelectFilter: (filter: string) => void;
   data: DSVParsedArray<T>;
   labels: Record<string, string>;
 }
 
-export const SelectAxes = <T extends CSVRow>({
+export const LinePlotAxes = <T extends CSVRow>({
   id,
   selectedX,
   selectedY,
-  selectedColor,
+  selectedGrouping,
+  selectedFilter,
   onSelectX,
   onSelectY,
-  onSelectColor,
+  onSelectGrouping,
+  onSelectFilter,
   data,
   labels,
-}: PropsWithChildren<SelectAxesProps<T>>) => {
+}: PropsWithChildren<LinePlotAxesProps<T>>) => {
+  const groupValue = (row: T) => row[selectedGrouping] as string;
+  const uniqueGroupValues = Array.from(new Set(data.map(groupValue)));
+  uniqueGroupValues.push('All');
+
   // this is probably not the best way of doing this
   const numericOptions = Object.entries(data[0])
     .filter((col) => typeof col[1] === 'number')
@@ -82,16 +90,34 @@ export const SelectAxes = <T extends CSVRow>({
       <Col sm={7} md={7} lg={8}>
         <Space direction="vertical" size="small" style={{ width: '100%' }}>
           <Text strong style={{ fontSize: 12 }}>
-            Color:
+            Grouping:
           </Text>
           <Select
             style={{ width: '100%', maxWidth: '200px' }}
-            defaultValue={selectedColor as string}
-            onChange={onSelectColor as (value: string) => void}
+            defaultValue={selectedGrouping as string}
+            onChange={onSelectGrouping as (value: string) => void}
           >
             {stringOptions.map((key) => (
               <Option value={key} key={key}>
                 {labels[key]}
+              </Option>
+            ))}
+          </Select>
+        </Space>
+      </Col>
+      <Col sm={7} md={7} lg={8}>
+        <Space direction="vertical" size="small" style={{ width: '100%' }}>
+          <Text strong style={{ fontSize: 12 }}>
+            Filter:
+          </Text>
+          <Select
+            style={{ width: '100%', maxWidth: '200px' }}
+            defaultValue={selectedFilter}
+            onChange={onSelectFilter}
+          >
+            {uniqueGroupValues.map((key) => (
+              <Option value={key} key={key}>
+                {key}
               </Option>
             ))}
           </Select>

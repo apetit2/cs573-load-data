@@ -5,8 +5,8 @@ import { NotFound } from './pages/NotFound';
 import { lazy } from 'react';
 
 const MinimumWage = lazy(() => import('./pages/MinimumWagePage'));
-const Avocado = lazy(() => import('./pages/Avocado'));
-const Hurricane = lazy(() => import('./pages/Hurricane'));
+const Avocado = lazy(() => import('./pages/AvocadoPage'));
+const Hurricane = lazy(() => import('./pages/HurricanePage'));
 const CSVInfoPage = lazy(() => import('./pages/CSVInfoPage'));
 
 export const AppRouter: React.FC = () => (
