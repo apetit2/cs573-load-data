@@ -1,4 +1,6 @@
 # Description
+[Live demo](https://apetit2.github.io/cs573-load-data/#/minimum-wage/line)
+
 This project is used to import the CSV datasets found in the three gists provided in the below section. When starting the app, there are three tabs to distinquish between each of the datasets. Clicking any of the associated tabs, will fire off an api request to retrieve the associated CSV. Once the api request resolves successfully, react-query is used to cache this response, so the api is effectively only hit once (at least until the data becomes stale). While on any of the tabs, the project presents information regarding the number of rows, columns, and size of the associated CSV.
 
 ## Links to Datasets Used
