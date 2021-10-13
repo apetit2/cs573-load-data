@@ -65,89 +65,49 @@ export const HomeLayout: React.FC<HomeLayoutProps> = () => {
               icon={<DollarCircleOutlined />}
               title={MIN_WAGE_TITLE}
             >
-              <Menu.Item key="1.1">
-                <Link
-                  to={`${AppRoutes.MinimumWage.replace(
-                    ':plotType',
-                    'scatter-plot'
-                  )}`}
-                >
-                  Scatter Plot
-                </Link>
+              <Menu.Item key="Min-Wage-Scatter-Plot">
+                <Link to={AppRoutes.MinimumWageScatterPlot}>Scatter Plot</Link>
               </Menu.Item>
-              <Menu.Item key="1.2">
-                <Link
-                  to={`${AppRoutes.MinimumWage.replace(
-                    ':plotType',
-                    'topography'
-                  )}`}
-                >
+              <Menu.Item key="Min-Wage-Initial-Geospatial">
+                <Link to={AppRoutes.MinimumWageGeospatialChart}>
                   Geospatial Chart (Initial)
                 </Link>
               </Menu.Item>
-              <Menu.Item key="1.3">
-                <Link to={`${AppRoutes.CSVInfo.replace(':type', 'min-wage')}`}>
-                  Dataset Information
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="1.4">
-                <Link
-                  to={`${AppRoutes.MinimumWage.replace(
-                    ':plotType',
-                    'geospatial-chart-iterated'
-                  )}`}
-                >
+              <Menu.Item key="Min-Wage-Iterated-Geospatial">
+                <Link to={AppRoutes.MinimumWageGeospatialChartIterated}>
                   Geospatial Chart (Iterated)
                 </Link>
               </Menu.Item>
-              <Menu.Item key="1.5">
-                <Link
-                  to={`${AppRoutes.MinimumWage.replace(':plotType', 'line')}`}
-                >
-                  Line Plot
+              <Menu.Item key="Min-Wage-Line-Chart">
+                <Link to={AppRoutes.MinimumWageLineChart}>Line Chart</Link>
+              </Menu.Item>
+              <Menu.Item key="Min-Wage-Dataset">
+                <Link to={AppRoutes.MinimumWageDatasetInfo}>
+                  Dataset Information
                 </Link>
               </Menu.Item>
             </SubMenu>
             <SubMenu key="2" icon={<AppleOutlined />} title={AVOCADO_TITLE}>
-              <Menu.Item key="2.1">
-                <Link
-                  to={`${AppRoutes.Avocado.replace(
-                    ':plotType',
-                    'scatter-plot'
-                  )}`}
-                >
-                  Scatter Plot
-                </Link>
+              <Menu.Item key="Avocado-Scatter-Plot">
+                <Link to={AppRoutes.AvocadoScatterPlot}>Scatter Plot</Link>
               </Menu.Item>
-              <Menu.Item key="2.2">
-                <Link to={`${AppRoutes.CSVInfo.replace(':type', 'avocado')}`}>
+              <Menu.Item key="Avocado-Dataset">
+                <Link to={AppRoutes.AvocadoDatasetInfo}>
                   Dataset Information
                 </Link>
               </Menu.Item>
             </SubMenu>
             <SubMenu key="3" icon={<FireOutlined />} title={HURRICANE_TITLE}>
-              <Menu.Item key="3.1">
-                <Link
-                  to={`${AppRoutes.Hurricane.replace(
-                    ':plotType',
-                    'scatter-plot'
-                  )}`}
-                >
-                  Scatter Plot
-                </Link>
+              <Menu.Item key="Hurricane-Scatter-Plot">
+                <Link to={AppRoutes.HurricaneScatterPlot}>Scatter Plot</Link>
               </Menu.Item>
-              <Menu.Item key="3.2">
-                <Link
-                  to={`${AppRoutes.Hurricane.replace(
-                    ':plotType',
-                    'topography'
-                  )}`}
-                >
+              <Menu.Item key="Hurricane-Geospatial">
+                <Link to={AppRoutes.HurricaneGeospatialChart}>
                   Geospatial Chart
                 </Link>
               </Menu.Item>
-              <Menu.Item key="3.3">
-                <Link to={`${AppRoutes.CSVInfo.replace(':type', 'hurricane')}`}>
+              <Menu.Item key="Hurricane-Dataset">
+                <Link to={AppRoutes.HurricaneDatasetInfo}>
                   Dataset Information
                 </Link>
               </Menu.Item>

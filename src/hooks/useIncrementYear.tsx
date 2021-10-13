@@ -18,7 +18,7 @@ export const useIncrementYear = (
       } else {
         setYear(currentSelectedYear + 1);
       }
-    }, 1000);
+    }, 500);
 
     // eslint-disable-next-line consistent-return
     return () => clearInterval(interval);
