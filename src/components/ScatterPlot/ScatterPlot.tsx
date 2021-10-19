@@ -1,7 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import {
   DSVParsedArray,
-  ScaleOrdinal,
   extent,
   interpolateTurbo,
   scaleLinear,
@@ -12,7 +11,8 @@ import { AxisBottom } from './AxisBottom';
 import { AxisLeft } from './AxisLeft';
 import { CSVRow } from '../../services/models/shared';
 import { KeysMatching } from '../../types/shared';
-import { PropsWithChildren } from 'react';
+import { AnimatedGroup } from '../AnimatedGroup';
+import { PropsWithChildren, useCallback, useMemo } from 'react';
 
 export interface ScatterPlotProps<T extends CSVRow> {
   width: number;
@@ -41,61 +41,92 @@ export const ScatterPlot = <T extends CSVRow>({
   data,
   opacity = '.3',
 }: PropsWithChildren<ScatterPlotProps<T>>) => {
-  const xValue = (row: T) => row[x] as number;
-  const yValue = (row: T) => row[y] as number;
-
-  const yRange = extent(data, yValue) as [number, number];
-  const xRange = extent(data, xValue) as [number, number];
-
-  const paddedHeight = height - margin.top - margin.bottom;
-  const paddedWidth = width - margin.left - margin.right;
-
-  const xScale = scaleLinear().domain(xRange).range([0, paddedWidth]).nice();
-  const yScale = scaleLinear().domain(yRange).range([paddedHeight, 0]);
-
-  let uniqueOrdinalValues: string[];
-  let numUniqueOrdinalValues: number;
-  let colors: string[];
-  let colorScale: ScaleOrdinal<string, string, never> | undefined;
-  let colorValue: (row: T) => string;
-
-  if (color) {
-    colorValue = (row: T) => row[color] as string;
-
-    uniqueOrdinalValues = Array.from(new Set(data.map(colorValue)));
-    numUniqueOrdinalValues = uniqueOrdinalValues.length;
-
-    colors = uniqueOrdinalValues.map((_, index) => {
-      return interpolateTurbo(index / numUniqueOrdinalValues);
-    });
-
-    colorScale = scaleOrdinal<string>()
-      .domain(data.map(colorValue))
-      .range(colors);
-  }
-
-  const marginsForAxes = {
-    ...margin,
-    left: yRange[1].toString().length * 8.75 + 20,
-  };
-
   const xAxisLabelOffset = 50;
-  const yAxisLabelOffset = yRange[1].toString().length * 8.75 + 10;
+
+  const xValue = useCallback((row: T) => row[x] as number, [x]);
+  const yValue = useCallback((row: T) => row[y] as number, [y]);
+  const colorValue = useCallback(
+    (row: T) => {
+      return color ? (row[color] as string) : undefined;
+    },
+    [color]
+  );
+
+  const xRange = useMemo(() => {
+    return extent(data, xValue) as [number, number];
+  }, [xValue, data]);
+
+  const yRange = useMemo(() => {
+    return extent(data, yValue) as [number, number];
+  }, [yValue, data]);
+
+  const paddedHeight = useMemo(() => {
+    return height - margin.top - margin.bottom;
+  }, [height, margin]);
+
+  const paddedWidth = useMemo(() => {
+    return width - margin.left - margin.right;
+  }, [width, margin]);
+
+  const xScale = useMemo(() => {
+    return scaleLinear().domain(xRange).range([0, paddedWidth]).nice();
+  }, [xRange, paddedWidth]);
+
+  const yScale = useMemo(() => {
+    return scaleLinear().domain(yRange).range([paddedHeight, 0]);
+  }, [yRange, paddedHeight]);
+
+  const { colorScale } = useMemo(() => {
+    if (color) {
+      const uniqueOrdinalValues = Array.from(
+        new Set(data.map(colorValue))
+      ) as string[];
+      const numUniqueOrdinalValues = uniqueOrdinalValues.length;
+      const range = uniqueOrdinalValues.map((_, index) => {
+        return interpolateTurbo(index / numUniqueOrdinalValues);
+      });
+
+      const scale = scaleOrdinal<string>()
+        .domain(data.map(colorValue as (row: T) => string))
+        .range(range);
+
+      return { colorRange: range, colorScale: scale };
+    }
+
+    return { colorRange: undefined, colorScale: undefined };
+  }, [colorValue, data, color]);
+
+  const marginsForAxes = useMemo(() => {
+    return {
+      ...margin,
+      left: yRange[1].toString().length * 8.75 + 20,
+    };
+  }, [yRange, margin]);
+
+  const yAxisLabelOffset = useMemo(() => {
+    return yRange[1].toString().length * 8.75 + 10;
+  }, [yRange]);
+
+  const yAxisLabel = useMemo(() => {
+    return (
+      <text
+        className="axis-label"
+        textAnchor="middle"
+        transform={`translate(${-yAxisLabelOffset},${
+          paddedHeight / 2
+        }) rotate(-90)`}
+      >
+        {yLabel}
+      </text>
+    );
+  }, [yAxisLabelOffset, paddedHeight, yLabel]);
 
   return (
     <svg width={width} height={height}>
       <g transform={`translate(${marginsForAxes.left},${marginsForAxes.top})`}>
         <AxisBottom xScale={xScale} height={paddedHeight} tickOffset={10} />
 
-        <text
-          className="axis-label"
-          textAnchor="middle"
-          transform={`translate(${-yAxisLabelOffset},${
-            paddedHeight / 2
-          }) rotate(-90)`}
-        >
-          {yLabel}
-        </text>
+        {yAxisLabel}
 
         <AxisLeft yScale={yScale} width={paddedWidth} tickOffset={5} />
 
@@ -108,18 +139,20 @@ export const ScatterPlot = <T extends CSVRow>({
           {xLabel}
         </text>
 
-        {data.map((row, index) => (
-          <circle
-            key={index}
-            cx={xScale(xValue(row))}
-            cy={yScale(yValue(row))}
-            r={radius}
-            opacity={opacity}
-            fill={
-              colorScale && colorValue ? colorScale(colorValue(row)) : 'black'
-            }
-          />
-        ))}
+        <AnimatedGroup>
+          {data.map((row, index) => {
+            return (
+              <circle
+                key={index}
+                cx={xScale(xValue(row))}
+                cy={yScale(yValue(row))}
+                r={radius}
+                opacity={opacity}
+                fill={colorScale ? colorScale(colorValue(row)!) : 'green'}
+              />
+            );
+          })}
+        </AnimatedGroup>
       </g>
     </svg>
   );

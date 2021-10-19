@@ -24,7 +24,7 @@ export const useFallback = <T extends CSVRow>(
     fallback = <Loading />;
   }
 
-  if (!data) {
+  if (!data && !isLoading) {
     fallback = <Text strong>No Data Found.</Text>;
   }
 

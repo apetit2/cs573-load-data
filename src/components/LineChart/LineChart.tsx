@@ -5,23 +5,25 @@ import {
   interpolateTurbo,
   scaleLinear,
   scaleOrdinal,
+  line,
+  curveBasis,
+  brushX,
+  select,
 } from 'd3';
-import { PropsWithChildren, ReactElement } from 'react';
+import {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { AxisBottom } from './AxisBottom';
 import { AxisLeft } from './AxisLeft';
 import { CSVRow } from '../../services/models/shared';
 import { KeysMatching } from '../../types/shared';
-
-interface LinePoint {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  stroke: string;
-  strokeWidth: number;
-  opacity: string;
-}
+import { AnimatedGroup } from '../AnimatedGroup';
 
 export interface LineChartProps<T extends CSVRow> {
   filter?: string;
@@ -37,19 +39,58 @@ export interface LineChartProps<T extends CSVRow> {
   data: DSVParsedArray<T>;
   strokeWidth?: number;
   stroke?: string;
+  focusable?: boolean;
 }
 
-const drawLines = (lines: Map<string, LinePoint[]>) => {
-  const entries: ReactElement[] = [];
+const xAxisLabelOffset = 50;
+const brushedSectionSize = 0.2;
 
-  lines.forEach((linePoints, key) => {
-    (linePoints as LinePoint[]).forEach((linePoint) => {
-      entries.push(
-        <line key={`${key}-${linePoint.x1}-${linePoint.y1}`} {...linePoint} />
+const filterData = <T extends CSVRow>(
+  data: DSVParsedArray<T>,
+  grouping: KeysMatching<T, string | undefined>,
+  filter?: string,
+  brushExtent?: [number, number],
+  x?: KeysMatching<T, number | undefined>
+) => {
+  const lines: T[][] = [];
+  let rowIndex = 0;
+  // no great way to make this efficient
+  data
+    .filter((row) => {
+      if (brushExtent && x) {
+        return (
+          (filter === undefined ||
+            (row[grouping] as string).toLowerCase() === filter.toLowerCase()) &&
+          (row[x] as number) >= brushExtent[0] &&
+          (row[x] as number) <= brushExtent[1]
+        );
+      }
+
+      return (
+        filter === undefined ||
+        (row[grouping] as string).toLowerCase() === filter.toLowerCase()
       );
+    })
+    .sort((rowOne, rowTwo) => {
+      return (rowOne[grouping] as string).localeCompare(
+        rowTwo[grouping] as string
+      );
+    })
+    .forEach((row, index, arr) => {
+      if (
+        index >= 1 &&
+        (row[grouping] as string) !== (arr[index - 1][grouping] as string)
+      ) {
+        lines.push([row]);
+        rowIndex += 1;
+      } else if (index === 0) {
+        lines.push([row]);
+      } else {
+        lines[rowIndex].push(row);
+      }
     });
-  });
-  return entries;
+
+  return lines;
 };
 
 export const LineChart = <T extends CSVRow>({
@@ -66,88 +107,138 @@ export const LineChart = <T extends CSVRow>({
   opacity = '.3',
   strokeWidth = 3,
   stroke,
+  focusable = true,
 }: PropsWithChildren<LineChartProps<T>>) => {
-  const xValue = (row: T) => row[x] as number;
-  const yValue = (row: T) => row[y] as number;
-  const colorValue = (row: T) => row[grouping] as string;
+  const [brushExtent, setBrushExtent] = useState<[number, number]>();
+  const brushRef = useRef<SVGGElement>(null);
 
-  const yRange = extent(data, yValue) as [number, number];
-  const xRange = extent(data, xValue) as [number, number];
+  const xValue = useCallback((row: T) => row[x] as number, [x]);
+  const yValue = useCallback((row: T) => row[y] as number, [y]);
+  const colorValue = useCallback(
+    (row: T) => row[grouping] as string,
+    [grouping]
+  );
 
-  const paddedHeight = height - margin.top - margin.bottom;
-  const paddedWidth = width - margin.left - margin.right;
+  const brushedSectionHeight = useMemo(
+    () => brushedSectionSize * height,
+    [height]
+  );
 
-  const xScale = scaleLinear().domain(xRange).range([0, paddedWidth]).nice();
-  const yScale = scaleLinear().domain(yRange).range([paddedHeight, 0]);
+  const yRange = useMemo(
+    () => extent(data, yValue) as [number, number],
+    [data, yValue]
+  );
+  const xRange = useMemo(
+    () => extent(data, xValue) as [number, number],
+    [data, xValue]
+  );
+  const focusXRange = useMemo(
+    () => extent(data, xValue) as [number, number],
+    [data, xValue]
+  );
 
-  const marginsForAxes = {
-    ...margin,
-    left: yRange[1].toString().length * 8.75 + 20,
-  };
+  const paddedHeight = useMemo(
+    () => height - margin.top - margin.bottom,
+    [height, margin]
+  );
+  const paddedWidth = useMemo(
+    () => width - margin.left - margin.right,
+    [width, margin]
+  );
 
-  const xAxisLabelOffset = 50;
-  const yAxisLabelOffset = yRange[1].toString().length * 8.75 + 10;
+  const xScale = useMemo(
+    () =>
+      scaleLinear()
+        .domain(brushExtent || xRange)
+        .range([0, paddedWidth])
+        .nice(),
+    [paddedWidth, xRange, brushExtent]
+  );
+  const yScale = useMemo(
+    () => scaleLinear().domain(yRange).range([paddedHeight, 0]),
+    [paddedHeight, yRange]
+  );
+  const focusXScale = useMemo(
+    () => scaleLinear().domain(focusXRange).range([0, paddedWidth]).nice(),
+    [paddedWidth, focusXRange]
+  );
+  const focusYScale = useMemo(
+    () =>
+      scaleLinear()
+        .domain(yRange)
+        .range([height * brushedSectionSize, 0]),
+    [yRange, height]
+  );
 
-  const lines: Map<string, LinePoint[]> = new Map();
+  const colorScale = useMemo(() => {
+    const uniqueOrdinalValues = Array.from(new Set(data.map(colorValue)));
+    const numUniqueOrdinalValues = uniqueOrdinalValues.length;
 
-  const uniqueOrdinalValues = Array.from(new Set(data.map(colorValue)));
-  const numUniqueOrdinalValues = uniqueOrdinalValues.length;
-
-  const colors = uniqueOrdinalValues.map((_, index) => {
-    return interpolateTurbo(index / numUniqueOrdinalValues);
-  });
-
-  const colorScale = scaleOrdinal<string>()
-    .domain(data.map(colorValue))
-    .range(colors);
-
-  data
-    .filter(
-      (row) =>
-        filter === undefined ||
-        (row[grouping] as string).toLowerCase() === filter.toLowerCase()
-    )
-    .sort((rowOne, rowTwo) => {
-      return (rowOne[grouping] as string).localeCompare(
-        rowTwo[grouping] as string
-      );
-    })
-    .forEach((row, index, arr) => {
-      if (
-        index < arr.length - 1 &&
-        (row[grouping] as string) === (arr[index + 1][grouping] as string)
-      ) {
-        if (lines.has(row[grouping] as string)) {
-          lines.set(row[grouping] as string, [
-            ...lines.get(row[grouping] as string)!,
-            {
-              x1: xScale(xValue(row)),
-              y1: yScale(yValue(row)),
-              x2: xScale(xValue(arr[index + 1])),
-              y2: yScale(yValue(arr[index + 1])),
-              stroke: stroke || colorScale(colorValue(row)),
-              strokeWidth,
-              opacity,
-            },
-          ]);
-        } else {
-          lines.set(row[grouping] as string, [
-            {
-              x1: xScale(xValue(row)),
-              y1: yScale(yValue(row)),
-              x2: xScale(xValue(arr[index + 1])),
-              y2: yScale(yValue(arr[index + 1])),
-              stroke: stroke || colorScale(colorValue(row)),
-              strokeWidth,
-              opacity,
-            },
-          ]);
-        }
-      }
+    const colors = uniqueOrdinalValues.map((_, index) => {
+      return interpolateTurbo(index / numUniqueOrdinalValues);
     });
+    return scaleOrdinal<string>().domain(data.map(colorValue)).range(colors);
+  }, [data, colorValue]);
+
+  const marginsForAxes = useMemo(
+    () => ({
+      ...margin,
+      left: yRange[1].toString().length * 8.75 + 20,
+    }),
+    [margin, yRange]
+  );
+
+  const yAxisLabelOffset = useMemo(
+    () => yRange[1].toString().length * 8.75 + 10,
+    [yRange]
+  );
+
+  const drawLines = useMemo(() => {
+    return line<T>()
+      .x((row) => xScale(xValue(row)))
+      .y((row) => yScale(yValue(row)))
+      .curve(curveBasis);
+  }, [xScale, yScale, yValue, xValue]);
+
+  const drawFocus = useMemo(() => {
+    return line<T>()
+      .x((row) => focusXScale(xValue(row)))
+      .y((row) => focusYScale(yValue(row)))
+      .curve(curveBasis);
+  }, [focusXScale, focusYScale, yValue, xValue]);
+
+  useEffect(() => {
+    if (brushRef.current && paddedWidth > 0) {
+      const brush = brushX().extent([
+        [0, 0],
+        [paddedWidth, brushedSectionHeight],
+      ]);
+      brush(select<SVGGElement, unknown>(brushRef.current));
+      brush.on('brush end', (event) => {
+        setBrushExtent(
+          event.selection && event.selection.map(focusXScale.invert)
+        );
+      });
+    }
+  }, [paddedWidth, brushedSectionHeight, brushRef, focusXScale]);
+
+  const lines = useMemo(
+    () => filterData(data, grouping, filter, brushExtent, x),
+    [data, grouping, filter, brushExtent, x]
+  );
+
+  const focusLines = useMemo(() => {
+    if (focusable) {
+      return filterData(data, grouping, filter);
+    }
+    return undefined;
+  }, [data, grouping, filter, focusable]);
 
   return (
-    <svg width={width} height={height}>
+    <svg
+      width={width}
+      height={focusable ? height + height * brushedSectionSize + 50 : height}
+    >
       <g transform={`translate(${marginsForAxes.left},${marginsForAxes.top})`}>
         <AxisBottom xScale={xScale} height={paddedHeight} tickOffset={10} />
 
@@ -163,17 +254,55 @@ export const LineChart = <T extends CSVRow>({
 
         <AxisLeft yScale={yScale} width={paddedWidth} tickOffset={5} />
 
-        <text
-          className="axis-label"
-          x={paddedWidth / 2}
-          y={paddedHeight + xAxisLabelOffset}
-          textAnchor="middle"
-        >
-          {xLabel}
-        </text>
+        {!focusable && (
+          <text
+            className="axis-label"
+            x={paddedWidth / 2}
+            y={paddedHeight + xAxisLabelOffset}
+            textAnchor="middle"
+          >
+            {xLabel}
+          </text>
+        )}
 
-        {drawLines(lines)}
+        <AnimatedGroup>
+          {lines.map((toDrawLine) => (
+            <path
+              key={toDrawLine[0][grouping]}
+              d={drawLines(toDrawLine)!}
+              stroke={stroke || colorScale(colorValue(toDrawLine[0]))}
+              strokeWidth={strokeWidth}
+              opacity={opacity}
+              fill="none"
+            />
+          ))}
+        </AnimatedGroup>
       </g>
+      {focusable && (
+        <AnimatedGroup
+          ref={brushRef}
+          transform={`translate(${marginsForAxes.left}, ${
+            height + margin.bottom + margin.top - brushedSectionHeight
+          })`}
+        >
+          <AxisBottom
+            xScale={focusXScale}
+            height={brushedSectionHeight}
+            tickOffset={10}
+          />
+
+          {focusLines?.map((toDrawLine) => (
+            <path
+              key={toDrawLine[0][grouping]}
+              d={drawFocus(toDrawLine)!}
+              stroke={stroke || colorScale(colorValue(toDrawLine[0]))}
+              strokeWidth={strokeWidth}
+              opacity={opacity}
+              fill="none"
+            />
+          ))}
+        </AnimatedGroup>
+      )}
     </svg>
   );
 };

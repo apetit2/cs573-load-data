@@ -23,10 +23,10 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   generateChart,
   showDescriptionTitle = true,
 }) => {
-  const { dimensions, setContainerDiv } = useResizeChart();
+  const { ref, dimensions } = useResizeChart();
 
   return (
-    <div style={{ width: '100%' }} ref={(el) => setContainerDiv(el)}>
+    <div style={{ width: '100%' }} ref={ref}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <Row style={{ width: '100%' }} justify="space-between" gutter={[0, 24]}>
           <Col xs={7}>

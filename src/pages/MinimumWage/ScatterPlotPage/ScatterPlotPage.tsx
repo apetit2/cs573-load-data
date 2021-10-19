@@ -41,7 +41,7 @@ export const ScatterPlotPage: React.FC<ScatterPlotPageProps> = () => {
     <>
       <Text>
         A scatter plot depicting effective minimum wage data for all U.S states
-        and territiories since 1968. It visualizes data supplied by the U.S
+        and territories since 1968. It visualizes data supplied by the U.S
         Department of Labor. All data can be found in the{' '}
         <Link to={{ pathname: Constants.gistUrl }} target="_blank">
           Minimum Wage Dataset
