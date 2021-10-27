@@ -44,7 +44,7 @@ export const LineChartPage: React.FC<LineChartPageProps> = () => {
         A line chart depicting effective minimum wage data for all U.S states
         and territiories since 1968. It visualizes data supplied by the U.S
         Department of Labor. All data can be found in the{' '}
-        <Link to={{ pathname: Constants.gistUrl }} target="_blank">
+        <Link to={{ pathname: Constants.minWageUrl }} target="_blank">
           Minimum Wage Dataset
         </Link>
         .

@@ -13,6 +13,11 @@ import { CSVRow } from '../../services/models/shared';
 import { KeysMatching } from '../../types/shared';
 import { AnimatedGroup } from '../AnimatedGroup';
 import { PropsWithChildren, useCallback, useMemo } from 'react';
+import ReactTooltip from 'react-tooltip';
+import { Space, Typography } from 'antd';
+import { currencyFormatter } from '../../util/currency';
+
+const { Text } = Typography;
 
 export interface ScatterPlotProps<T extends CSVRow> {
   width: number;
@@ -26,6 +31,7 @@ export interface ScatterPlotProps<T extends CSVRow> {
   radius: number;
   data: DSVParsedArray<T>;
   opacity?: string;
+  showTooltip?: boolean;
 }
 
 export const ScatterPlot = <T extends CSVRow>({
@@ -39,6 +45,7 @@ export const ScatterPlot = <T extends CSVRow>({
   color,
   radius,
   data,
+  showTooltip = false,
   opacity = '.3',
 }: PropsWithChildren<ScatterPlotProps<T>>) => {
   const xAxisLabelOffset = 50;
@@ -121,39 +128,77 @@ export const ScatterPlot = <T extends CSVRow>({
     );
   }, [yAxisLabelOffset, paddedHeight, yLabel]);
 
+  const findFieldByValue = (value: string): { x: number; y: number } => {
+    const tmp = data.find((el) => (el[color!] as string) === value);
+
+    return tmp
+      ? { x: tmp[x!] as number, y: tmp[y!] as number }
+      : { x: 0, y: 0 };
+  };
+
   return (
-    <svg width={width} height={height}>
-      <g transform={`translate(${marginsForAxes.left},${marginsForAxes.top})`}>
-        <AxisBottom xScale={xScale} height={paddedHeight} tickOffset={10} />
-
-        {yAxisLabel}
-
-        <AxisLeft yScale={yScale} width={paddedWidth} tickOffset={5} />
-
-        <text
-          className="axis-label"
-          x={paddedWidth / 2}
-          y={paddedHeight + xAxisLabelOffset}
-          textAnchor="middle"
+    <>
+      <svg width={width} height={height}>
+        <g
+          transform={`translate(${marginsForAxes.left},${marginsForAxes.top})`}
         >
-          {xLabel}
-        </text>
+          <AxisBottom xScale={xScale} height={paddedHeight} tickOffset={10} />
 
-        <AnimatedGroup>
-          {data.map((row, index) => {
+          {yAxisLabel}
+
+          <AxisLeft yScale={yScale} width={paddedWidth} tickOffset={5} />
+
+          <text
+            className="axis-label"
+            x={paddedWidth / 2}
+            y={paddedHeight + xAxisLabelOffset}
+            textAnchor="middle"
+          >
+            {xLabel}
+          </text>
+
+          <AnimatedGroup>
+            {data.map((row, index) => {
+              return (
+                <circle
+                  data-tip={colorValue(row)}
+                  data-for="tooltip"
+                  key={index}
+                  cx={xScale(xValue(row))}
+                  cy={yScale(yValue(row))}
+                  r={radius}
+                  opacity={opacity}
+                  fill={colorScale ? colorScale(colorValue(row)!) : 'green'}
+                />
+              );
+            })}
+          </AnimatedGroup>
+        </g>
+      </svg>
+      {showTooltip && (
+        <ReactTooltip
+          id="tooltip"
+          place="top"
+          effect="float"
+          getContent={(val) => {
+            const xAndY = findFieldByValue(val);
+
             return (
-              <circle
-                key={index}
-                cx={xScale(xValue(row))}
-                cy={yScale(yValue(row))}
-                r={radius}
-                opacity={opacity}
-                fill={colorScale ? colorScale(colorValue(row)!) : 'green'}
-              />
+              <Space direction="vertical">
+                <Text style={{ color: 'white' }}>
+                  {color}: {val}
+                </Text>
+                <Text style={{ color: 'white' }}>
+                  {x}: {currencyFormatter.format(xAndY.x)}
+                </Text>
+                <Text style={{ color: 'white' }}>
+                  {y}: {currencyFormatter.format(xAndY.y)}
+                </Text>
+              </Space>
             );
-          })}
-        </AnimatedGroup>
-      </g>
-    </svg>
+          }}
+        />
+      )}
+    </>
   );
 };

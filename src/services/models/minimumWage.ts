@@ -16,6 +16,23 @@ export interface MinimumWage extends CSVRow {
   depLaborCleanedHighValue?: number;
   depLaborCleanedHighValueTodayDollars?: number;
   footnote?: string;
+  studio?: number;
+  oneBedroom?: number;
+  twoBedroom?: number;
+  threeBedroom?: number;
+  fourBedroom?: number;
+  population?: number;
+}
+
+export interface Rent extends CSVRow {
+  state?: string;
+  year?: number;
+  studio?: number;
+  oneBedroom?: number;
+  twoBedroom?: number;
+  threeBedroom?: number;
+  fourBedroom?: number;
+  population?: number;
 }
 
 export const MinimumWageCols = {
@@ -36,6 +53,23 @@ export const MinimumWageCols = {
   depLaborCleanedHighValueTodayDollars:
     'Dep. Of Labor Cleaned High Value (2020 Dollars)',
   footnote: 'Footnote',
+  studio: 'Average Studio Apartment Cost',
+  oneBedroom: 'Average One Bedroom Apartment Cost',
+  twoBedroom: 'Average Two Bedroom Apartment Cost',
+  threeBedroom: 'Average Three Bedroom Apartment Cost',
+  fourBedroom: 'Average Four Bedroom Apartment Cost',
+  population: 'Population',
+} as const;
+
+export const RentCols = {
+  state: 'State',
+  year: 'Year',
+  studio: 'Average Studio Apartment Cost',
+  oneBedroom: 'Average One Bedroom Apartment Cost',
+  twoBedroom: 'Average Two Bedroom Apartment Cost',
+  threeBedroom: 'Average Three Bedroom Apartment Cost',
+  fourBedroom: 'Average Four Bedroom Apartment Cost',
+  population: 'Population',
 } as const;
 
 export type MinimumWageCol = typeof MinimumWageCols;

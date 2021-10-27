@@ -66,7 +66,7 @@ export const GeospatialChartIteratedPage: React.FC<GeospatialChartIteratedPagePr
           A geospatial chart depicting effective minimum wage data for all U.S
           states and territories since 1968. It visualizes data supplied by the
           U.S Department of Labor. All data can be found in the{' '}
-          <Link to={{ pathname: Constants.gistUrl }} target="_blank">
+          <Link to={{ pathname: Constants.minWageUrl }} target="_blank">
             Minimum Wage Dataset
           </Link>
           .

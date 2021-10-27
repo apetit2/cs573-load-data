@@ -5,10 +5,10 @@ import { fetchUSMap, fetchWorldMap } from '../lib/maps';
 import { Avocado } from '../models/avocado';
 import { DSVParsedArray } from 'd3-dsv';
 import { Hurricane } from '../models/hurricane';
-import { MinimumWage } from '../models/minimumWage';
+import { MinimumWage, Rent } from '../models/minimumWage';
 import { fetchAvocadoCSV } from '../lib/avocado';
 import { fetchHurricaneCSV } from '../lib/hurricane';
-import { fetchMinimumWageCSV } from '../lib/minimumWage';
+import { fetchMinimumWageCSV, fetchRentCSV } from '../lib/minimumWage';
 
 const useMinimumWageQuery = (
   options?: UseQueryOptions<DSVParsedArray<MinimumWage>, Error>
@@ -18,6 +18,9 @@ const useMinimumWageQuery = (
     fetchMinimumWageCSV,
     options
   );
+
+const useRentQuery = (options?: UseQueryOptions<DSVParsedArray<Rent>, Error>) =>
+  useQuery<DSVParsedArray<Rent>, Error>('rent', fetchRentCSV, options);
 
 const useAvocadoQuery = (
   options?: UseQueryOptions<DSVParsedArray<Avocado>, Error>
@@ -45,4 +48,5 @@ export {
   useMinimumWageQuery,
   useWorldMapQuery,
   useUSMapQuery,
+  useRentQuery,
 };

@@ -24,7 +24,7 @@ export const CSVInfoPage: React.FC<CSVInfoPageProps> = () => {
       provides information on minimum wage for all U.S states and territories
       since 1968. Data is supplied by the U.S Department of Labor. The CSV can
       be found in the{' '}
-      <Link to={{ pathname: Constants.gistUrl }} target="_blank">
+      <Link to={{ pathname: Constants.minWageUrl }} target="_blank">
         Minimum Wage Dataset
       </Link>
       .
